@@ -138,7 +138,7 @@ export const App = () => {
 
   return (
     <div className="flex flex-col h-screen bg-stone-50 dark:bg-[#0e0e10] transition-colors duration-300">
-      <header className={`relative z-50 flex items-center justify-between px-5 py-3 border-b border-stone-200 dark:border-white/5 bg-white/80 dark:bg-[#0e0e10]/80 backdrop-blur-xl ${minimalMode ? 'hidden' : ''}`}>
+      <header className={`relative z-50 flex items-center justify-between px-4 py-2 border-b border-stone-200 dark:border-white/5 bg-white/80 dark:bg-[#0e0e10]/80 backdrop-blur-xl ${minimalMode ? 'hidden' : ''}`}>
         <div className="flex flex-col shrink-0">
           <h1 className="text-lg font-semibold text-stone-800 dark:text-zinc-100 tracking-tight whitespace-nowrap">MD Persona</h1>
           <span className="hidden lg:block text-xs text-stone-500 dark:text-zinc-400 mt-0.5">Secure local editor — create, edit, save md without cloud or database</span>
@@ -170,10 +170,29 @@ export const App = () => {
 
           <div className="hidden sm:block w-px h-4 bg-stone-200 dark:bg-white/10 mx-1" />
 
-          <div className="hidden sm:flex items-center gap-1">
+            <div className="hidden sm:flex items-center gap-1">
             <ThemeToggle />
             <div className="hidden sm:block w-px h-4 bg-stone-200 dark:bg-white/10 mx-1" />
             <FontSelector />
+            <div className="flex items-center gap-0.5 ml-1">
+              <button
+                onClick={() => setFontSize(Math.max(14, fontSize - 1))}
+                disabled={fontSize <= 14}
+                className="w-8 h-8 rounded-lg flex items-center justify-center text-base text-stone-600 dark:text-zinc-300 hover:bg-stone-100 dark:hover:bg-white/5 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+                title="Decrease font size"
+              >
+                −
+              </button>
+              <span className="w-6 text-center text-sm font-medium text-stone-800 dark:text-zinc-100">{fontSize}</span>
+              <button
+                onClick={() => setFontSize(Math.min(18, fontSize + 1))}
+                disabled={fontSize >= 18}
+                className="w-8 h-8 rounded-lg flex items-center justify-center text-base text-stone-600 dark:text-zinc-300 hover:bg-stone-100 dark:hover:bg-white/5 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+                title="Increase font size"
+              >
+                +
+              </button>
+            </div>
           </div>
 
           <button

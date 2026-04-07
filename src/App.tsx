@@ -269,26 +269,40 @@ export const App = () => {
       </header>
 
       <div className="sm:hidden flex items-center justify-center gap-2 px-4 py-2 border-b border-stone-200 dark:border-white/5 bg-white/60 dark:bg-[#0e0e10]/60 backdrop-blur-sm">
-        <button
-          onClick={() => setActivePanel('editor')}
-          className={`flex-1 py-2 rounded-lg text-xs font-medium transition-all ${
-            activePanel === 'editor'
-              ? 'bg-stone-800 dark:bg-zinc-100 text-white dark:text-zinc-900'
-              : 'bg-stone-100 dark:bg-white/5 text-stone-500 dark:text-zinc-400'
-          }`}
-        >
-          Editor
-        </button>
-        <button
-          onClick={() => setActivePanel('preview')}
-          className={`flex-1 py-2 rounded-lg text-xs font-medium transition-all ${
-            activePanel === 'preview'
-              ? 'bg-stone-800 dark:bg-zinc-100 text-white dark:text-zinc-900'
-              : 'bg-stone-100 dark:bg-white/5 text-stone-500 dark:text-zinc-400'
-          }`}
-        >
-          Preview
-        </button>
+        <div className="relative flex-1">
+          <button
+            onClick={() => setActivePanel('editor')}
+            className={`w-full py-2 rounded-lg text-xs font-medium transition-all ${
+              activePanel === 'editor'
+                ? 'bg-stone-800 dark:bg-zinc-100 text-white dark:text-zinc-900'
+                : 'bg-stone-100 dark:bg-white/5 text-stone-500 dark:text-zinc-400'
+            }`}
+          >
+            Editor
+          </button>
+          <div className={`absolute -bottom-1 left-1/2 -translate-x-1/2 w-0 h-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-t-[6px] transition-all duration-200 ${
+            activePanel === 'editor' 
+              ? 'opacity-100 border-t-stone-800 dark:border-t-zinc-100' 
+              : 'opacity-0'
+          }`} />
+        </div>
+        <div className="relative flex-1">
+          <button
+            onClick={() => setActivePanel('preview')}
+            className={`w-full py-2 rounded-lg text-xs font-medium transition-all ${
+              activePanel === 'preview'
+                ? 'bg-stone-800 dark:bg-zinc-100 text-white dark:text-zinc-900'
+                : 'bg-stone-100 dark:bg-white/5 text-stone-500 dark:text-zinc-400'
+            }`}
+          >
+            Preview
+          </button>
+          <div className={`absolute -bottom-1 left-1/2 -translate-x-1/2 w-0 h-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-t-[6px] transition-all duration-200 ${
+            activePanel === 'preview' 
+              ? 'opacity-100 border-t-stone-800 dark:border-t-zinc-100' 
+              : 'opacity-0'
+          }`} />
+        </div>
       </div>
 
       <main className="relative flex flex-1">

@@ -21,7 +21,6 @@ export const App = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const isDragging = useRef(false);
-  const editorRef = useRef<HTMLTextAreaElement>(null);
   const { download } = useAutosave(value);
 
   useEffect(() => {

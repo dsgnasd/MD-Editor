@@ -1,4 +1,4 @@
-import { useEffect, useCallback, useRef, useState } from 'react';
+import { useEffect, useCallback, useRef } from 'react';
 
 type EditorProps = {
   value: string;
@@ -11,8 +11,6 @@ export const Editor = ({ value, onChange, fontSize }: EditorProps) => {
   const historyRef = useRef<string[]>([value]);
   const historyIdxRef = useRef(0);
   const skipHistoryRef = useRef(false);
-  const [isDragging, setIsDragging] = useState(false);
-  const dropRef = useRef<HTMLDivElement>(null);
 
   const pushHistory = useCallback((val: string) => {
     const idx = historyIdxRef.current;
@@ -28,38 +26,6 @@ export const Editor = ({ value, onChange, fontSize }: EditorProps) => {
     skipHistoryRef.current = skipHistory;
     onChange({ target: { value: val } } as React.ChangeEvent<HTMLTextAreaElement>);
   }, [onChange]);
-
-  const insertAtCursor = useCallback((text: string) => {
-    const ta = taRef.current;
-    if (!ta) return;
-    const s = ta.selectionStart;
-    const before = value.substring(0, s);
-    const after = value.substring(s);
-    const newValue = before + text + after;
-    setValue(newValue);
-    pushHistory(newValue);
-    requestAnimationFrame(() => {
-      ta.focus();
-      ta.setSelectionRange(s + text.length, s + text.length);
-    });
-  }, [value, setValue, pushHistory]);
-
-  const handleDrop = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    setIsDragging(false);
-    const files = e.dataTransfer?.files;
-    if (!files) return;
-    Array.from(files).forEach((file) => {
-      if (!file.type.startsWith('image/')) return;
-      const reader = new FileReader();
-      reader.onload = () => {
-        const dataUrl = reader.result as string;
-        const md = `\n![${file.name}](${dataUrl})\n`;
-        insertAtCursor(md);
-      };
-      reader.readAsDataURL(file);
-    });
-  }, [insertAtCursor]);
 
   const applyFormat = useCallback((marker: string) => {
     const ta = taRef.current;
@@ -172,25 +138,7 @@ export const Editor = ({ value, onChange, fontSize }: EditorProps) => {
   }, [value, pushHistory]);
 
   return (
-    <div
-      ref={dropRef}
-      className="w-full h-full overflow-auto relative"
-      onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
-      onDragLeave={(e) => {
-        if (!dropRef.current?.contains(e.relatedTarget as Node)) setIsDragging(false);
-      }}
-      onDrop={handleDrop}
-    >
-      {isDragging && (
-        <div className="absolute inset-0 z-20 flex items-center justify-center bg-blue-500/5 dark:bg-blue-400/5 backdrop-blur-sm border-2 border-dashed border-blue-400/40 dark:border-blue-400/30 rounded-lg m-2">
-          <div className="flex flex-col items-center gap-2 text-blue-400/70 dark:text-blue-400/60">
-            <svg className="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-            </svg>
-            <span className="text-sm font-medium">Перетащите изображение</span>
-          </div>
-        </div>
-      )}
+    <div className="w-full h-full overflow-auto">
       <textarea
         ref={taRef}
         value={value}

@@ -195,8 +195,7 @@ export const App = () => {
             <div className="hidden sm:flex items-center gap-1">
             <ThemeToggle />
             <div className="hidden sm:block w-px h-4 bg-stone-200 dark:bg-white/10 mx-1" />
-            <FontSelector />
-            <div className="flex items-center gap-0.5 ml-1">
+            <div className="flex items-center gap-0.5">
               <button
                 onClick={() => setFontSize(Math.max(14, fontSize - 1))}
                 disabled={fontSize <= 14}
@@ -215,6 +214,8 @@ export const App = () => {
                 +
               </button>
             </div>
+            <div className="hidden sm:block w-px h-4 bg-stone-200 dark:bg-white/10 mx-1" />
+            <FontSelector />
           </div>
 
           <button

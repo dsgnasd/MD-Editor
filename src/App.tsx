@@ -170,6 +170,28 @@ export const App = () => {
 
           <div className="hidden sm:block w-px h-4 bg-stone-200 dark:bg-white/10 mx-1" />
 
+          <button
+            onClick={() => {
+              if (activeNote) {
+                const text = activeNote.content;
+                if (navigator.share) {
+                  navigator.share({ text });
+                } else {
+                  navigator.clipboard.writeText(text);
+                }
+              }
+            }}
+            className="hidden sm:flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm text-stone-600 dark:text-zinc-300 hover:text-stone-900 dark:hover:text-zinc-100 hover:bg-stone-100 dark:hover:bg-white/5 transition-all duration-200"
+            title="Share"
+          >
+            <svg className="w-[18px] h-[18px]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M7.217 10.907a2.25 2.25 0 100 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186l9.566-5.314m-9.566 7.5l9.566 5.314m0 0a2.25 2.25 0 103.935 2.186 2.25 2.25 0 00-3.935-2.186zm0-12.814a2.25 2.25 0 103.933-2.185 2.25 2.25 0 00-3.933 2.185z" />
+            </svg>
+            <span className="hidden sm:inline">Share</span>
+          </button>
+
+          <div className="hidden sm:block w-px h-4 bg-stone-200 dark:bg-white/10 mx-1" />
+
             <div className="hidden sm:flex items-center gap-1">
             <ThemeToggle />
             <div className="hidden sm:block w-px h-4 bg-stone-200 dark:bg-white/10 mx-1" />
@@ -347,11 +369,11 @@ export const App = () => {
       {menuOpen && (
         <div className="fixed inset-0 z-40 sm:hidden">
           <div className="absolute inset-0 bg-black/20 dark:bg-black/40" onClick={() => setMenuOpen(false)} />
-          <div className="absolute right-0 top-0 bottom-0 w-80 bg-white dark:bg-[#1a1a1e] shadow-2xl flex flex-col pt-20 pb-6 px-6">
+          <div className="absolute right-0 top-0 bottom-0 w-80 bg-white dark:bg-[#1a1a1e] shadow-2xl flex flex-col pt-20 pb-6 px-4">
             <div className="space-y-1">
               <button
                 onClick={() => { createNewNote(); setMenuOpen(false); }}
-                className="w-full flex items-center gap-3 px-4 py-3.5 rounded-xl text-sm text-stone-700 dark:text-zinc-200 hover:bg-stone-100 dark:hover:bg-white/5 transition-all"
+                className="w-full flex items-center gap-3 px-4 py-4 rounded-xl text-sm text-stone-700 dark:text-zinc-200 hover:bg-stone-100 dark:hover:bg-white/5 transition-all h-14"
               >
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M12 5v14m-7-7h14" />
@@ -361,7 +383,7 @@ export const App = () => {
 
               <button
                 onClick={() => { download(); setMenuOpen(false); }}
-                className="w-full flex items-center gap-3 px-4 py-3.5 rounded-xl text-sm text-stone-700 dark:text-zinc-200 hover:bg-stone-100 dark:hover:bg-white/5 transition-all"
+                className="w-full flex items-center gap-3 px-4 py-4 rounded-xl text-sm text-stone-700 dark:text-zinc-200 hover:bg-stone-100 dark:hover:bg-white/5 transition-all h-14"
               >
                 <svg className="w-[18px] h-[18px]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
@@ -369,44 +391,64 @@ export const App = () => {
                 Download .md
               </button>
 
+              <button
+                onClick={() => {
+                  if (activeNote) {
+                    const text = activeNote.content;
+                    if (navigator.share) {
+                      navigator.share({ text });
+                    } else {
+                      navigator.clipboard.writeText(text);
+                    }
+                  }
+                  setMenuOpen(false);
+                }}
+                className="w-full flex items-center gap-3 px-4 py-4 rounded-xl text-sm text-stone-700 dark:text-zinc-200 hover:bg-stone-100 dark:hover:bg-white/5 transition-all h-14"
+              >
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M7.217 10.907a2.25 2.25 0 100 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186l9.566-5.314m-9.566 7.5l9.566 5.314m0 0a2.25 2.25 0 103.935 2.186 2.25 2.25 0 00-3.935-2.186zm0-12.814a2.25 2.25 0 103.933-2.185 2.25 2.25 0 00-3.933 2.185z" />
+                </svg>
+                Share
+              </button>
+
               <div className="h-px bg-stone-200 dark:bg-white/10 my-2" />
 
-              <div className="flex items-center justify-between px-4 py-3.5 rounded-xl hover:bg-stone-100 dark:hover:bg-white/5 transition-all">
+              <div className="flex items-center justify-between px-4 py-4 rounded-xl hover:bg-stone-100 dark:hover:bg-white/5 transition-all h-14">
                 <span className="text-sm text-stone-700 dark:text-zinc-200">Theme</span>
-          <div className="hidden sm:flex items-center gap-1">
-            <ThemeToggle />
-          </div>
+                <div className="flex items-center gap-1">
+                  <ThemeToggle />
+                </div>
               </div>
 
-              <div className="flex items-center justify-between px-4 py-3.5 rounded-xl hover:bg-stone-100 dark:hover:bg-white/5 transition-all">
+              <div className="flex items-center justify-between px-4 py-4 rounded-xl hover:bg-stone-100 dark:hover:bg-white/5 transition-all h-14">
                 <span className="text-sm text-stone-700 dark:text-zinc-200">Font Size</span>
                 <div className="flex items-center gap-1">
                   <button
                     onClick={() => setFontSize(Math.max(14, fontSize - 1))}
                     disabled={fontSize <= 14}
-                    className="w-7 h-7 rounded-lg flex items-center justify-center text-sm text-stone-600 dark:text-zinc-300 hover:bg-stone-100 dark:hover:bg-white/5 disabled:opacity-30 disabled:cursor-not-allowed"
+                    className="w-8 h-8 rounded-lg flex items-center justify-center text-base text-stone-600 dark:text-zinc-300 hover:bg-stone-100 dark:hover:bg-white/5 disabled:opacity-30 disabled:cursor-not-allowed"
                   >
                     −
                   </button>
-                  <span className="w-5 text-center text-sm font-medium text-stone-800 dark:text-zinc-100">{fontSize}</span>
+                  <span className="w-6 text-center text-sm font-medium text-stone-800 dark:text-zinc-100">{fontSize}</span>
                   <button
                     onClick={() => setFontSize(Math.min(18, fontSize + 1))}
                     disabled={fontSize >= 18}
-                    className="w-7 h-7 rounded-lg flex items-center justify-center text-sm text-stone-600 dark:hover:bg-white/5 disabled:opacity-30 disabled:cursor-not-allowed"
+                    className="w-8 h-8 rounded-lg flex items-center justify-center text-base text-stone-600 dark:text-zinc-300 hover:bg-stone-100 dark:hover:bg-white/5 disabled:opacity-30 disabled:cursor-not-allowed"
                   >
                     +
                   </button>
                 </div>
               </div>
 
-              <div className="flex items-center justify-between px-4 py-3.5 rounded-xl hover:bg-stone-100 dark:hover:bg-white/5 transition-all">
+              <div className="flex items-center justify-between px-4 py-4 rounded-xl hover:bg-stone-100 dark:hover:bg-white/5 transition-all h-14">
                 <span className="text-sm text-stone-700 dark:text-zinc-200">Font</span>
                 <FontSelector />
               </div>
 
               <button
                 onClick={() => { setHelpOpen(true); setMenuOpen(false); }}
-                className="w-full px-4 py-3.5 rounded-xl text-sm text-stone-700 dark:text-zinc-200 hover:bg-stone-100 dark:hover:bg-white/5 transition-all text-left"
+                className="w-full px-4 py-4 rounded-xl text-sm text-stone-700 dark:text-zinc-200 hover:bg-stone-100 dark:hover:bg-white/5 transition-all text-left h-14"
               >
                 Markdown Tips
               </button>

@@ -5,6 +5,7 @@ import { Preview } from './components/Preview';
 import { FontSelector } from './components/FontSelector';
 import { ThemeToggle } from './components/ThemeToggle';
 import { HelpDialog } from './components/HelpDialog';
+import { fonts, fontKey } from './utils/constants';
 
 export const App = () => {
   const {
@@ -25,6 +26,8 @@ export const App = () => {
     return Math.min(Math.max(saved, 14), 18);
   });
   const [menuOpen, setMenuOpen] = useState(false);
+  const [fontMenuOpen, setFontMenuOpen] = useState(false);
+  const [font, setFont] = useState(() => localStorage.getItem(fontKey) || 'inter');
   const [isMobile, setIsMobile] = useState(false);
   const [helpOpen, setHelpOpen] = useState(false);
   const [minimalMode, setMinimalMode] = useState(false);
@@ -99,7 +102,7 @@ export const App = () => {
 
   useEffect(() => {
     if (menuOpen) {
-      document.body.style.overflow = 'hidden';
+      document.body.style.overflow = 'auto';
     } else {
       document.body.style.overflow = '';
     }
@@ -127,6 +130,23 @@ export const App = () => {
     return () => window.removeEventListener('resize', check);
   }, []);
 
+  useEffect(() => {
+    const savedFont = localStorage.getItem(fontKey) || 'inter';
+    setFont(savedFont);
+    const font = fonts.find(f => f.id === savedFont);
+    if (font) {
+      document.body.style.fontFamily = font.family;
+    }
+  }, []);
+
+  useEffect(() => {
+    const fontObj = fonts.find(f => f.id === font);
+    if (fontObj) {
+      document.body.style.fontFamily = fontObj.family;
+      localStorage.setItem(fontKey, font);
+    }
+  }, [font]);
+
   const wordCount = activeNote?.content.trim() === '' ? 0 : (activeNote?.content.trim().split(/\s+/).length || 0);
 
   const formatWords = (count: number) => {
@@ -137,8 +157,8 @@ export const App = () => {
   const noteCount = notes.length;
 
   return (
-    <div className="flex flex-col h-screen bg-stone-50 dark:bg-[#0e0e10] transition-colors duration-300">
-      <header className={`relative z-50 flex items-center justify-between px-4 py-2 border-b border-stone-200 dark:border-white/5 bg-white/80 dark:bg-[#0e0e10]/80 backdrop-blur-xl ${minimalMode ? 'hidden' : ''}`}>
+    <div className="flex flex-col h-screen bg-stone-50 dark:bg-[#0e0e10] transition-colors duration-300 overflow-visible">
+      <header className={`sticky top-0 z-50 flex items-center justify-between px-4 py-2 border-b border-stone-200 dark:border-white/5 bg-white/80 dark:bg-[#0e0e10]/80 backdrop-blur-xl ${minimalMode ? 'hidden' : ''}`}>
         <div className="flex flex-col shrink-0">
           <h1 className="text-lg font-semibold text-stone-800 dark:text-zinc-100 tracking-tight whitespace-nowrap">MD Persona</h1>
           <span className="hidden lg:block text-xs text-stone-500 dark:text-zinc-400 mt-0.5">Secure local editor — create, edit, save md without cloud or database</span>
@@ -215,7 +235,7 @@ export const App = () => {
               </button>
             </div>
             <div className="hidden sm:block w-px h-4 bg-stone-200 dark:bg-white/10 mx-1" />
-            <FontSelector />
+            <FontSelector font={font} onFontChange={setFont} />
           </div>
 
           <button
@@ -271,7 +291,7 @@ export const App = () => {
         </button>
       </div>
 
-      <main className="relative flex flex-1 overflow-hidden">
+      <main className="relative flex flex-1">
         {minimalMode ? (
           <div className="h-full w-full bg-white dark:bg-[#131316] overflow-y-auto">
             <div className="h-full w-full max-w-[900px] mx-auto">
@@ -370,7 +390,7 @@ export const App = () => {
       {menuOpen && (
         <div className="fixed inset-0 z-40 sm:hidden">
           <div className="absolute inset-0 bg-black/20 dark:bg-black/40" onClick={() => setMenuOpen(false)} />
-          <div className="absolute right-0 top-0 bottom-0 w-80 bg-white dark:bg-[#1a1a1e] shadow-2xl flex flex-col pt-20 pb-6 px-4">
+          <div className="absolute right-0 top-0 bottom-0 w-80 bg-white dark:bg-[#1a1a1e] shadow-2xl flex flex-col pt-20 pb-6 px-4 overflow-y-auto">
             <div className="space-y-1">
               <button
                 onClick={() => { createNewNote(); setMenuOpen(false); }}
@@ -442,10 +462,33 @@ export const App = () => {
                 </div>
               </div>
 
-              <div className="flex items-center justify-between px-4 py-4 rounded-xl hover:bg-stone-100 dark:hover:bg-white/5 transition-all h-14">
+              <button
+                onClick={() => setFontMenuOpen(!fontMenuOpen)}
+                className="w-full flex items-center justify-between px-4 py-4 rounded-xl hover:bg-stone-100 dark:hover:bg-white/5 transition-all h-14"
+              >
                 <span className="text-sm text-stone-700 dark:text-zinc-200">Font</span>
-                <FontSelector />
-              </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm text-stone-600 dark:text-zinc-400">{fonts.find(f => f.id === font)?.label}</span>
+                  <svg className={`w-4 h-4 text-stone-400 transition-transform ${fontMenuOpen ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                  </svg>
+                </div>
+              </button>
+
+              {fontMenuOpen && (
+                <div className="px-2 pb-2 space-y-1">
+                  {fonts.map(f => (
+                    <button
+                      key={f.id}
+                      onClick={() => setFont(f.id)}
+                      className="w-full flex items-center gap-3 px-3 py-3 rounded-xl text-sm hover:bg-stone-100 dark:hover:bg-white/5 transition-all"
+                    >
+                      <span className="w-10 h-10 rounded-lg bg-stone-100 dark:bg-white/5 flex items-center justify-center text-xs font-semibold text-stone-700 dark:text-zinc-300" style={{ fontFamily: f.family }}>Aa</span>
+                      <span className="text-stone-700 dark:text-zinc-200" style={{ fontFamily: f.family }}>{f.label}</span>
+                    </button>
+                  ))}
+                </div>
+              )}
 
               <button
                 onClick={() => { setHelpOpen(true); setMenuOpen(false); }}

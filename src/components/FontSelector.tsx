@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { fontKey, fonts } from '../utils/constants';
 
 const Dropdown = ({
@@ -25,6 +25,14 @@ const Dropdown = ({
     return () => document.removeEventListener('mousedown', handler);
   }, []);
 
+  const getDropdownPosition = () => {
+    if (!ref.current) return 'mt-2';
+    const rect = ref.current.getBoundingClientRect();
+    const spaceBelow = window.innerHeight - rect.bottom;
+    const dropdownHeight = 300;
+    return spaceBelow < dropdownHeight ? 'mb-2' : 'mt-2';
+  };
+
   return (
     <div ref={ref} className="relative">
       <button
@@ -40,7 +48,7 @@ const Dropdown = ({
       {open && (
         <>
           <div className="fixed inset-0 z-20" onClick={() => setOpen(false)} />
-          <div className="absolute right-0 mt-2 w-52 bg-white dark:bg-zinc-900 border border-stone-200 dark:border-white/10 rounded-xl shadow-[0_8px_40px_rgba(0,0,0,0.12)] dark:shadow-[0_8px_40px_rgba(0,0,0,0.4)] z-30 overflow-hidden">
+          <div className={`absolute right-0 ${getDropdownPosition()} w-52 bg-white dark:bg-zinc-900 border border-stone-200 dark:border-white/10 rounded-xl shadow-[0_8px_40px_rgba(0,0,0,0.12)] dark:shadow-[0_8px_40px_rgba(0,0,0,0.4)] z-30 overflow-hidden`}>
             <div className="p-1">
               {options.map(id => (
                 <button
@@ -80,16 +88,10 @@ const FontPreview = ({ id, active }: { id: string; active: boolean }) => {
   );
 };
 
-export const FontSelector = () => {
-  const [font, setFont] = useState(() => localStorage.getItem(fontKey) || 'inter');
-
-  useEffect(() => {
-    const selected = fonts.find(f => f.id === font);
-    if (selected) {
-      document.body.style.fontFamily = selected.family;
-      localStorage.setItem(fontKey, font);
-    }
-  }, [font]);
+export const FontSelector = ({ font, onFontChange }: { font: string; onFontChange: (fontId: string) => void }) => {
+  const handleSelect = (id: string) => {
+    onFontChange(id);
+  };
 
   const current = fonts.find(f => f.id === font);
 
@@ -97,7 +99,7 @@ export const FontSelector = () => {
     <Dropdown
       value={font}
       options={fonts.map(f => f.id)}
-      onSelect={setFont}
+      onSelect={handleSelect}
       renderTrigger={() => (
         <>
           <svg className="w-[18px] h-[18px]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>

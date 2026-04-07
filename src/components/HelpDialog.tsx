@@ -129,17 +129,5 @@ export const HelpDialog = ({ open, onClose }: HelpDialogProps) => {
     </div>
   );
 
-  return (
-    <>
-      <button
-        onClick={onClose}
-        className="hidden sm:block px-2.5 py-1 rounded-lg text-[11px] font-medium text-stone-500 dark:text-zinc-400 hover:text-stone-800 dark:hover:text-zinc-200 hover:bg-stone-100 dark:hover:bg-white/5 transition-all duration-200"
-        title="Подсказка по Markdown"
-      >
-        Markdown tips
-      </button>
-
-      {open && createPortal(dialog, document.body)}
-    </>
-  );
+  return open ? createPortal(dialog, document.body) : null;
 };

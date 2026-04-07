@@ -39,6 +39,10 @@ export const useNotes = () => {
       note.id = urlNoteId;
       return [note, ...all];
     }
+    if (all.length === 0) {
+      const note = createNote();
+      return [note];
+    }
     return all;
   });
 

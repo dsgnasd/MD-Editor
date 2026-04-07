@@ -175,8 +175,6 @@ export const App = () => {
             <span className="hidden sm:inline">New Note</span>
           </button>
 
-          <div className="hidden sm:block w-px h-4 bg-stone-200 dark:bg-white/10 mx-1" />
-
           <button
             onClick={download}
             className="hidden sm:flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm text-stone-600 dark:text-zinc-300 hover:text-stone-900 dark:hover:text-zinc-100 hover:bg-stone-100 dark:hover:bg-white/5 transition-all duration-200"
@@ -187,8 +185,6 @@ export const App = () => {
             </svg>
             <span className="hidden sm:inline">Download</span>
           </button>
-
-          <div className="hidden sm:block w-px h-4 bg-stone-200 dark:bg-white/10 mx-1" />
 
           <button
             onClick={() => {
@@ -214,7 +210,6 @@ export const App = () => {
 
             <div className="hidden sm:flex items-center gap-1">
             <ThemeToggle />
-            <div className="hidden sm:block w-px h-4 bg-stone-200 dark:bg-white/10 mx-1" />
             <div className="flex items-center gap-0.5">
               <button
                 onClick={() => setFontSize(Math.max(14, fontSize - 1))}
@@ -234,7 +229,6 @@ export const App = () => {
                 +
               </button>
             </div>
-            <div className="hidden sm:block w-px h-4 bg-stone-200 dark:bg-white/10 mx-1" />
             <FontSelector font={font} onFontChange={setFont} />
           </div>
 

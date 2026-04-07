@@ -23,7 +23,7 @@ export const Preview = ({ value, fontSize }: PreviewProps) => {
 
   return (
     <div
-      className="preview prose dark:prose-dark max-w-none px-10 py-6 h-full overflow-y-auto"
+      className="preview prose dark:prose-dark max-w-none px-10 py-6"
       style={{ fontSize: `${fontSize}px` }}
     >
       <div dangerouslySetInnerHTML={{ __html: html }} />

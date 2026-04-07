@@ -179,8 +179,8 @@ export const App = () => {
       <main className="relative flex flex-1 overflow-hidden">
         {panelsSwapped ? (
           <>
-            <div className="h-full bg-white dark:bg-[#131316]" style={{ width: isMobile ? (activePanel === 'preview' ? '100%' : '0%') : `${100 - split}%`, display: isMobile && activePanel !== 'preview' ? 'none' : undefined }}>
-              <div className="w-full max-w-[85ch] mx-auto h-full">
+            <div className="h-full bg-white dark:bg-[#131316] overflow-y-auto" style={{ width: isMobile ? (activePanel === 'preview' ? '100%' : '0%') : `${100 - split}%`, display: isMobile && activePanel !== 'preview' ? 'none' : undefined }}>
+              <div className="w-full max-w-[85ch] mx-auto">
                 <Preview value={value} fontSize={fontSize} />
               </div>
             </div>
@@ -198,13 +198,13 @@ export const App = () => {
               <div className="w-px h-8 bg-stone-300 dark:bg-white/10 group-hover:h-10 transition-all rounded-full" />
             </div>
 
-            <div className="h-full bg-stone-50 dark:bg-[#0e0e10]" style={{ width: isMobile ? (activePanel === 'editor' ? '100%' : '0%') : `${split}%`, display: isMobile && activePanel !== 'editor' ? 'none' : undefined }}>
+            <div className="h-full bg-stone-50 dark:bg-[#0e0e10] overflow-y-auto" style={{ width: isMobile ? (activePanel === 'editor' ? '100%' : '0%') : `${split}%`, display: isMobile && activePanel !== 'editor' ? 'none' : undefined }}>
               <Editor value={value} onChange={handleChange} fontSize={fontSize - 1} />
             </div>
           </>
         ) : (
           <>
-            <div className="h-full bg-stone-50 dark:bg-[#0e0e10]" style={{ width: isMobile ? (activePanel === 'editor' ? '100%' : '0%') : `${split}%`, display: isMobile && activePanel !== 'editor' ? 'none' : undefined }}>
+            <div className="h-full bg-stone-50 dark:bg-[#0e0e10] overflow-y-auto" style={{ width: isMobile ? (activePanel === 'editor' ? '100%' : '0%') : `${split}%`, display: isMobile && activePanel !== 'editor' ? 'none' : undefined }}>
               <Editor value={value} onChange={handleChange} fontSize={fontSize - 1} />
             </div>
 
@@ -221,8 +221,8 @@ export const App = () => {
               <div className="w-px h-8 bg-stone-300 dark:bg-white/10 group-hover:h-10 transition-all rounded-full" />
             </div>
 
-            <div className="h-full bg-white dark:bg-[#131316]" style={{ width: isMobile ? (activePanel === 'preview' ? '100%' : '0%') : `${100 - split}%`, display: isMobile && activePanel !== 'preview' ? 'none' : undefined }}>
-              <div className="w-full max-w-[85ch] mx-auto h-full">
+            <div className="h-full bg-white dark:bg-[#131316] overflow-y-auto" style={{ width: isMobile ? (activePanel === 'preview' ? '100%' : '0%') : `${100 - split}%`, display: isMobile && activePanel !== 'preview' ? 'none' : undefined }}>
+              <div className="w-full max-w-[85ch] mx-auto">
                 <Preview value={value} fontSize={fontSize} />
               </div>
             </div>

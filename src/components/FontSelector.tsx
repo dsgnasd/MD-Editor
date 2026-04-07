@@ -71,14 +71,7 @@ const FontPreview = ({ id, active }: { id: string; active: boolean }) => {
         <span className="text-sm font-semibold text-stone-700 dark:text-zinc-300">Aa</span>
       </div>
       <div className="flex-1 min-w-0">
-        <div className="flex items-center gap-2">
-          <span className="text-sm font-medium text-stone-700 dark:text-zinc-300" style={{ fontFamily: f.family }}>{f.label}</span>
-          <span className="text-[10px] px-1.5 py-0.5 rounded-md bg-stone-100 dark:bg-white/5 text-stone-400 dark:text-zinc-500">{f.category}</span>
-        </div>
-        <div className="flex items-center gap-2 mt-0.5">
-          <span className="text-xs font-bold text-stone-500 dark:text-zinc-400" style={{ fontFamily: f.family }}>Жирный</span>
-          <span className="text-xs font-light text-stone-300 dark:text-zinc-600" style={{ fontFamily: f.family }}>Тонкий</span>
-        </div>
+        <span className="text-sm font-medium text-stone-700 dark:text-zinc-300" style={{ fontFamily: f.family }}>{f.label}</span>
       </div>
       {active && (
         <div className="w-1.5 h-1.5 rounded-full bg-stone-800 dark:bg-zinc-300 flex-shrink-0" />

@@ -225,7 +225,7 @@ export const App = () => {
         {panelsSwapped ? (
           <>
             <div className="h-full bg-white dark:bg-[#131316]" style={{ width: isMobile ? (activePanel === 'preview' ? '100%' : '0%') : `${100 - split}%`, display: isMobile && activePanel !== 'preview' ? 'none' : undefined }}>
-              <div className="w-full max-w-[85ch] mx-auto h-full overflow-y-auto">
+              <div className="w-full max-w-[900px] mx-auto h-full overflow-y-auto">
                 <Preview value={activeNote?.content || ''} fontSize={fontSize} images={images} />
               </div>
             </div>
@@ -267,7 +267,7 @@ export const App = () => {
             </div>
 
             <div className="h-full bg-white dark:bg-[#131316]" style={{ width: isMobile ? (activePanel === 'preview' ? '100%' : '0%') : `${100 - split}%`, display: isMobile && activePanel !== 'preview' ? 'none' : undefined }}>
-              <div className="w-full max-w-[85ch] mx-auto h-full overflow-y-auto">
+              <div className="w-full max-w-[900px] mx-auto h-full overflow-y-auto">
                 <Preview value={activeNote?.content || ''} fontSize={fontSize} images={images} />
               </div>
             </div>

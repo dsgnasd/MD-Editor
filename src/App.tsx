@@ -1,16 +1,22 @@
-import { useState, useCallback, useRef, useEffect } from 'react';
-import { useAutosave } from './hooks/useAutosave';
+import { useState, useCallback, useRef, useEffect, useMemo } from 'react';
+import { useNotes } from './hooks/useNotes';
 import { Editor } from './components/Editor';
 import { Preview } from './components/Preview';
 import { FontSelector } from './components/FontSelector';
 import { ThemeToggle } from './components/ThemeToggle';
 import { HelpDialog } from './components/HelpDialog';
-import { storageKey } from './utils/constants';
 
 export const App = () => {
-  const [value, setValue] = useState(() => {
-    return localStorage.getItem(storageKey) || '';
-  });
+  const {
+    notes,
+    activeNote,
+    activeNoteId,
+    createNewNote,
+    renameNote,
+    updateNoteContent,
+    updateNoteImages,
+  } = useNotes();
+
   const [split, setSplit] = useState(50);
   const [panelsSwapped, setPanelsSwapped] = useState(false);
   const [activePanel, setActivePanel] = useState<'editor' | 'preview'>('editor');
@@ -20,15 +26,39 @@ export const App = () => {
   });
   const [menuOpen, setMenuOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [helpOpen, setHelpOpen] = useState(false);
   const isDragging = useRef(false);
-  const { download } = useAutosave(value);
+
+  const images = activeNote ? new Map(activeNote.images) : new Map<string, string>();
+
+  const handleImageAdd = useCallback((name: string, dataUrl: string) => {
+    if (!activeNoteId || !activeNote) return;
+    updateNoteImages(activeNoteId, [...activeNote.images, [name, dataUrl]]);
+  }, [activeNoteId, activeNote, updateNoteImages]);
+
+  const handleImageRemove = useCallback((name: string) => {
+    if (!activeNoteId || !activeNote) return;
+    updateNoteImages(activeNoteId, activeNote.images.filter(([n]) => n !== name));
+  }, [activeNoteId, activeNote, updateNoteImages]);
+
+  const download = useCallback(() => {
+    if (!activeNote) return;
+    const blob = new Blob([activeNote.content], { type: 'text/markdown' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${activeNote.title}.md`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }, [activeNote]);
 
   useEffect(() => {
     localStorage.setItem('md-editor-fontsize', String(fontSize));
   }, [fontSize]);
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setValue(e.target.value);
+    if (!activeNoteId) return;
+    updateNoteContent(activeNoteId, e.target.value);
   };
 
   const handleMouseDown = useCallback(() => {
@@ -77,7 +107,7 @@ export const App = () => {
     return () => window.removeEventListener('resize', check);
   }, []);
 
-  const wordCount = value.trim() === '' ? 0 : value.trim().split(/\s+/).length;
+  const wordCount = activeNote?.content.trim() === '' ? 0 : (activeNote?.content.trim().split(/\s+/).length || 0);
 
   const formatWords = (count: number) => {
     if (count === 0) return '0 слов';
@@ -88,6 +118,8 @@ export const App = () => {
     if (lastDigit >= 2 && lastDigit <= 4) return `${count} слова`;
     return `${count} слов`;
   };
+
+  const noteCount = notes.length;
 
   return (
     <div className="flex flex-col h-screen bg-stone-50 dark:bg-[#0e0e10] transition-colors duration-300">
@@ -117,6 +149,19 @@ export const App = () => {
               </svg>
             </button>
           </div>
+
+          <div className="hidden sm:block w-px h-4 bg-stone-200 dark:bg-white/10 mx-1" />
+
+          <button
+            onClick={createNewNote}
+            className="hidden sm:flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm text-stone-600 dark:text-zinc-300 hover:text-stone-900 dark:hover:text-zinc-100 hover:bg-stone-100 dark:hover:bg-white/5 transition-all duration-200"
+            title="Новая заметка"
+          >
+            <svg className="w-[18px] h-[18px]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+            </svg>
+            <span className="hidden sm:inline">Новая заметка</span>
+          </button>
 
           <div className="hidden sm:block w-px h-4 bg-stone-200 dark:bg-white/10 mx-1" />
 
@@ -181,7 +226,7 @@ export const App = () => {
           <>
             <div className="h-full bg-white dark:bg-[#131316] overflow-y-auto" style={{ width: isMobile ? (activePanel === 'preview' ? '100%' : '0%') : `${100 - split}%`, display: isMobile && activePanel !== 'preview' ? 'none' : undefined }}>
               <div className="w-full max-w-[85ch] mx-auto">
-                <Preview value={value} fontSize={fontSize} />
+                <Preview value={activeNote?.content || ''} fontSize={fontSize} images={images} />
               </div>
             </div>
 
@@ -199,13 +244,13 @@ export const App = () => {
             </div>
 
             <div className="h-full bg-stone-50 dark:bg-[#0e0e10] overflow-y-auto" style={{ width: isMobile ? (activePanel === 'editor' ? '100%' : '0%') : `${split}%`, display: isMobile && activePanel !== 'editor' ? 'none' : undefined }}>
-              <Editor value={value} onChange={handleChange} fontSize={fontSize - 1} />
+              <Editor value={activeNote?.content || ''} onChange={handleChange} fontSize={fontSize - 1} images={images} onImageAdd={handleImageAdd} onImageRemove={handleImageRemove} />
             </div>
           </>
         ) : (
           <>
             <div className="h-full bg-stone-50 dark:bg-[#0e0e10] overflow-y-auto" style={{ width: isMobile ? (activePanel === 'editor' ? '100%' : '0%') : `${split}%`, display: isMobile && activePanel !== 'editor' ? 'none' : undefined }}>
-              <Editor value={value} onChange={handleChange} fontSize={fontSize - 1} />
+              <Editor value={activeNote?.content || ''} onChange={handleChange} fontSize={fontSize - 1} images={images} onImageAdd={handleImageAdd} onImageRemove={handleImageRemove} />
             </div>
 
             <div
@@ -223,29 +268,29 @@ export const App = () => {
 
             <div className="h-full bg-white dark:bg-[#131316] overflow-y-auto" style={{ width: isMobile ? (activePanel === 'preview' ? '100%' : '0%') : `${100 - split}%`, display: isMobile && activePanel !== 'preview' ? 'none' : undefined }}>
               <div className="w-full max-w-[85ch] mx-auto">
-                <Preview value={value} fontSize={fontSize} />
+                <Preview value={activeNote?.content || ''} fontSize={fontSize} images={images} />
               </div>
             </div>
           </>
         )}
       </main>
 
-      <footer className="px-4 py-1 border-t border-stone-200 dark:border-white/5 bg-white/80 dark:bg-[#0e0e10]/80 backdrop-blur-xl flex items-center justify-between">
+      <footer className="hidden sm:flex px-4 py-1 border-t border-stone-200 dark:border-white/5 bg-white/80 dark:bg-[#0e0e10]/80 backdrop-blur-xl items-center justify-between">
         <button
           onClick={() => setPanelsSwapped(!panelsSwapped)}
-          className="hidden sm:flex items-center gap-1 px-2 py-1 rounded-lg text-xs text-stone-500 dark:text-zinc-400 hover:text-stone-700 dark:hover:text-zinc-200 hover:bg-stone-100 dark:hover:bg-white/5 transition-all duration-200"
+          className="flex items-center gap-1 px-2 py-1 rounded-lg text-xs text-stone-500 dark:text-zinc-400 hover:text-stone-700 dark:hover:text-zinc-200 hover:bg-stone-100 dark:hover:bg-white/5 transition-all duration-200"
           title="Поменять панели местами"
         >
           <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" />
+            <path strokeLinecap="round" strokeLinejoin="round" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
           </svg>
-          <span className="hidden sm:inline">Поменять панели</span>
+          <span>Поменять панели</span>
         </button>
         <div className="flex items-center gap-2">
           <span className="text-[11px] text-stone-500 dark:text-zinc-400 px-2 tabular-nums font-medium">
             {formatWords(wordCount)}
           </span>
-          <HelpDialog />
+          <HelpDialog open={helpOpen} onClose={() => setHelpOpen(false)} />
         </div>
       </footer>
 
@@ -267,6 +312,22 @@ export const App = () => {
 
             <div className="flex-1 overflow-y-auto py-4 px-5 space-y-4">
               <div>
+                <label className="text-xs font-medium text-stone-500 dark:text-zinc-400 uppercase tracking-wider">Заметки</label>
+                <button
+                  onClick={() => { createNewNote(); setMenuOpen(false); }}
+                  className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-stone-700 dark:text-zinc-200 hover:bg-stone-100 dark:hover:bg-white/5 transition-all mt-2"
+                >
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 5v14m-7-7h14" />
+                  </svg>
+                  Новая заметка
+                </button>
+                {noteCount > 0 && (
+                  <span className="block mt-1 text-xs text-stone-400 dark:text-zinc-500">{noteCount} {noteCount === 1 ? 'заметка' : noteCount < 5 ? 'заметки' : 'заметок'}</span>
+                )}
+              </div>
+
+              <div className="border-t border-stone-200 dark:border-white/5 pt-4">
                 <label className="text-xs font-medium text-stone-500 dark:text-zinc-400 uppercase tracking-wider">Размер шрифта</label>
                 <div className="flex items-center gap-2 mt-2">
                   <button
@@ -325,6 +386,19 @@ export const App = () => {
                   <span className="text-sm text-stone-700 dark:text-zinc-200">Шрифт</span>
                   <FontSelector />
                 </div>
+              </div>
+
+              <div className="border-t border-stone-200 dark:border-white/5 pt-4">
+                <label className="text-xs font-medium text-stone-500 dark:text-zinc-400 uppercase tracking-wider">Справка</label>
+                <button
+                  onClick={() => { setHelpOpen(true); setMenuOpen(false); }}
+                  className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-stone-700 dark:text-zinc-200 hover:bg-stone-100 dark:hover:bg-white/5 transition-all mt-2"
+                >
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75c0 1.014-.822 1.836-1.836 1.836H9.5c-1.014 0-1.836-.822-1.836-1.836v-.75c0-.828-.705-1.466-1.45-1.827a2.001 2.001 0 01-.67-.442c-1.172-1.025-1.172-2.687 0-3.712zM12 15.75h.008v.008H12v-.008z" />
+                  </svg>
+                  Markdown шпаргалка
+                </button>
               </div>
             </div>
 

@@ -1,4 +1,3 @@
-import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import md from '../utils/markdownParser';
 
@@ -92,19 +91,22 @@ print(fibonacci(10))
 *Это курсив в конце примера.*
 `;
 
-export const HelpDialog = () => {
-  const [open, setOpen] = useState(false);
+type HelpDialogProps = {
+  open: boolean;
+  onClose: () => void;
+};
 
+export const HelpDialog = ({ open, onClose }: HelpDialogProps) => {
   const html = md.render(exampleMarkdown);
 
   const dialog = (
     <div className="fixed inset-0 z-[200] flex items-center justify-center">
-      <div className="absolute inset-0 bg-black/50 dark:bg-black/70" style={{ backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)' }} onClick={() => setOpen(false)} />
+      <div className="absolute inset-0 bg-black/50 dark:bg-black/70" style={{ backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)' }} onClick={onClose} />
       <div className="relative w-[90vw] max-w-4xl max-h-[85vh] bg-white dark:bg-zinc-900 rounded-2xl shadow-2xl border border-stone-200 dark:border-white/10 flex flex-col overflow-hidden">
         <div className="flex items-center justify-between px-6 py-4 border-b border-stone-200 dark:border-white/5">
           <h2 className="text-lg font-semibold text-stone-800 dark:text-zinc-100">Markdown — шпаргалка</h2>
           <button
-            onClick={() => setOpen(false)}
+            onClick={onClose}
             className="w-8 h-8 rounded-lg flex items-center justify-center text-stone-400 hover:text-stone-700 dark:text-zinc-500 dark:hover:text-zinc-200 hover:bg-stone-100 dark:hover:bg-white/5 transition"
           >
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -130,8 +132,8 @@ export const HelpDialog = () => {
   return (
     <>
       <button
-        onClick={() => setOpen(true)}
-        className="px-2.5 py-1 rounded-lg text-[11px] font-medium text-stone-500 dark:text-zinc-400 hover:text-stone-800 dark:hover:text-zinc-200 hover:bg-stone-100 dark:hover:bg-white/5 transition-all duration-200"
+        onClick={onClose}
+        className="hidden sm:block px-2.5 py-1 rounded-lg text-[11px] font-medium text-stone-500 dark:text-zinc-400 hover:text-stone-800 dark:hover:text-zinc-200 hover:bg-stone-100 dark:hover:bg-white/5 transition-all duration-200"
         title="Подсказка по Markdown"
       >
         Markdown tips

@@ -1,11 +1,14 @@
 import md from '../utils/markdownParser';
 
+type ImageMap = Map<string, string>;
+
 type PreviewProps = {
   value: string;
   fontSize: number;
+  images: ImageMap;
 };
 
-export const Preview = ({ value, fontSize }: PreviewProps) => {
+export const Preview = ({ value, fontSize, images }: PreviewProps) => {
   if (!value.trim()) {
     return (
       <div className="flex items-center justify-center h-full text-zinc-400 dark:text-zinc-400">
@@ -19,7 +22,18 @@ export const Preview = ({ value, fontSize }: PreviewProps) => {
     );
   }
 
-  const html = md.render(value);
+  const expandedValue = value.replace(
+    /!\[([^\]]+)\](?!\()/g,
+    (match, name) => {
+      const dataUrl = images.get(name);
+      if (dataUrl) {
+        return `![${name}](${dataUrl})`;
+      }
+      return match;
+    }
+  );
+
+  const html = md.render(expandedValue);
 
   return (
     <div

@@ -3,9 +3,9 @@ import react from '@vitejs/plugin-react';
 
 export default defineConfig({
   plugins: [react()],
-  base: '/MD-Editor/',
+  base: '/',
   server: {
-    port: 5173,
+    port: 5174,
     open: true,
   },
   build: {

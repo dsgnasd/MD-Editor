@@ -299,7 +299,7 @@ export const App = () => {
         </div>
       </div>
 
-      <main className="relative flex flex-1">
+      <main className="relative flex flex-1 overflow-hidden">
         {minimalMode ? (
           <div className="h-full w-full bg-white dark:bg-[#131316] overflow-y-auto px-4 sm:px-0">
             <div className="h-full w-full max-w-[900px] mx-auto">

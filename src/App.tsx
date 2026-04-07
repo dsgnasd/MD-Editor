@@ -124,7 +124,7 @@ export const App = () => {
   return (
     <div className="flex flex-col h-screen bg-stone-50 dark:bg-[#0e0e10] transition-colors duration-300">
       <header className="relative z-50 flex items-center justify-between px-5 py-3 border-b border-stone-200 dark:border-white/5 bg-white/80 dark:bg-[#0e0e10]/80 backdrop-blur-xl">
-        <h1 className="text-lg font-semibold text-stone-800 dark:text-zinc-100 tracking-tight">MD‑Editor</h1>
+        <h1 className="text-lg font-semibold text-stone-800 dark:text-zinc-100 tracking-tight">MD Persona</h1>
         <div className="flex items-center gap-1">
           <div className="hidden sm:flex items-center gap-0.5 mr-1">
             <button

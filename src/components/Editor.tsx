@@ -185,6 +185,67 @@ export const Editor = ({ value, onChange, fontSize, images, onImageAdd, onImageR
           const next = historyRef.current[idx + 1];
           setValue(next, true);
         }
+      } else if (e.key === 'Enter' && !isMod) {
+        const ta = taRef.current;
+        if (!ta) return;
+        const s = ta.selectionStart;
+        const lineStart = value.lastIndexOf('\n', s - 1) + 1;
+        const line = value.substring(lineStart, s);
+        const bulletMatch = line.match(/^(\s*)([-*+]|\d+\.)\s/);
+        if (bulletMatch) {
+          e.preventDefault();
+          const [, indent, marker] = bulletMatch;
+          let nextMarker = marker;
+          if (/\d+\./.test(marker)) {
+            const num = parseInt(marker, 10) + 1;
+            nextMarker = `${num}.`;
+          }
+          const insertion = `\n${indent}${nextMarker} `;
+          const before = value.substring(0, s);
+          const after = value.substring(s);
+          const newValue = before + insertion + after;
+          setValue(newValue);
+          pushHistory(newValue);
+          requestAnimationFrame(() => {
+            ta.focus();
+            ta.setSelectionRange(s + insertion.length, s + insertion.length);
+          });
+        }
+      } else if (e.key === 'Tab' && !isMod) {
+        const ta = taRef.current;
+        if (!ta) return;
+        const s = ta.selectionStart;
+        const lineStart = value.lastIndexOf('\n', s - 1) + 1;
+        const line = value.substring(lineStart, s);
+        const bulletMatch = line.match(/^(\s*)([-*+]|\d+\.)\s/);
+        if (bulletMatch) {
+          e.preventDefault();
+          const [, indent, marker] = bulletMatch;
+          let newIndent = indent;
+          if (e.shiftKey) {
+            if (indent.length >= 2) {
+              newIndent = indent.slice(0, -2);
+            } else if (indent.length === 1) {
+              newIndent = '';
+            }
+          } else {
+            if (indent.length < 8) {
+              newIndent = indent + '  ';
+            }
+          }
+          const fullLineStart = lineStart;
+          const fullLineEnd = lineStart + line.length;
+          const before = value.substring(0, fullLineStart);
+          const after = value.substring(fullLineEnd);
+          const newLine = `${newIndent}${marker} `;
+          const newValue = before + newLine + after;
+          setValue(newValue);
+          pushHistory(newValue);
+          requestAnimationFrame(() => {
+            ta.focus();
+            ta.setSelectionRange(fullLineStart + newLine.length, fullLineStart + newLine.length);
+          });
+        }
       }
     };
 
@@ -195,7 +256,7 @@ export const Editor = ({ value, onChange, fontSize, images, onImageAdd, onImageR
     return () => {
       if (ta) ta.removeEventListener('keydown', handler);
     };
-  }, [applyFormat, setValue]);
+  }, [applyFormat, setValue, value, pushHistory]);
 
   useEffect(() => {
     if (!skipHistoryRef.current) {

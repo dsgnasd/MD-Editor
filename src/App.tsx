@@ -293,7 +293,7 @@ export const App = () => {
 
       <main className="relative flex flex-1">
         {minimalMode ? (
-          <div className="h-full w-full bg-white dark:bg-[#131316] overflow-y-auto">
+          <div className="h-full w-full bg-white dark:bg-[#131316] overflow-y-auto px-4 sm:px-0">
             <div className="h-full w-full max-w-[900px] mx-auto">
               <Preview value={activeNote?.content || ''} fontSize={fontSize} images={images} />
             </div>
@@ -301,7 +301,7 @@ export const App = () => {
         ) : (
           panelsSwapped ? (
           <>
-            <div className="h-full bg-white dark:bg-[#131316] overflow-y-auto" style={{ width: isMobile ? (activePanel === 'preview' ? '100%' : '0%') : `${split}%`, display: isMobile && activePanel !== 'preview' ? 'none' : undefined }}>
+            <div className="h-full bg-white dark:bg-[#131316] overflow-y-auto px-4 sm:px-0" style={{ width: isMobile ? (activePanel === 'preview' ? '100%' : '0%') : `${split}%`, display: isMobile && activePanel !== 'preview' ? 'none' : undefined }}>
               <div className="h-full w-full max-w-[900px] mx-auto">
                 <Preview value={activeNote?.content || ''} fontSize={fontSize} images={images} />
               </div>
@@ -320,13 +320,13 @@ export const App = () => {
               <div className="w-px h-8 bg-stone-300 dark:bg-white/10 group-hover:h-10 transition-all rounded-full" />
             </div>
 
-            <div className="h-full bg-stone-50 dark:bg-[#0e0e10] overflow-y-auto" style={{ width: isMobile ? (activePanel === 'editor' ? '100%' : '0%') : `${100 - split}%`, display: isMobile && activePanel !== 'editor' ? 'none' : undefined }}>
+            <div className="h-full bg-stone-50 dark:bg-[#0e0e10] overflow-y-auto px-4 sm:px-0" style={{ width: isMobile ? (activePanel === 'editor' ? '100%' : '0%') : `${100 - split}%`, display: isMobile && activePanel !== 'editor' ? 'none' : undefined }}>
               <Editor value={activeNote?.content || ''} onChange={handleChange} fontSize={fontSize - 1} images={images} onImageAdd={handleImageAdd} onImageRemove={handleImageRemove} />
             </div>
           </>
         ) : (
           <>
-            <div className="h-full bg-stone-50 dark:bg-[#0e0e10] overflow-y-auto" style={{ width: isMobile ? (activePanel === 'editor' ? '100%' : '0%') : `${split}%`, display: isMobile && activePanel !== 'editor' ? 'none' : undefined }}>
+            <div className="h-full bg-stone-50 dark:bg-[#0e0e10] overflow-y-auto px-4 sm:px-0" style={{ width: isMobile ? (activePanel === 'editor' ? '100%' : '0%') : `${split}%`, display: isMobile && activePanel !== 'editor' ? 'none' : undefined }}>
               <Editor value={activeNote?.content || ''} onChange={handleChange} fontSize={fontSize - 1} images={images} onImageAdd={handleImageAdd} onImageRemove={handleImageRemove} />
             </div>
 
@@ -343,7 +343,7 @@ export const App = () => {
               <div className="w-px h-8 bg-stone-300 dark:bg-white/10 group-hover:h-10 transition-all rounded-full" />
             </div>
 
-            <div className="h-full bg-white dark:bg-[#131316] overflow-y-auto" style={{ width: isMobile ? (activePanel === 'preview' ? '100%' : '0%') : `${100 - split}%`, display: isMobile && activePanel !== 'preview' ? 'none' : undefined }}>
+            <div className="h-full bg-white dark:bg-[#131316] overflow-y-auto px-4 sm:px-0" style={{ width: isMobile ? (activePanel === 'preview' ? '100%' : '0%') : `${100 - split}%`, display: isMobile && activePanel !== 'preview' ? 'none' : undefined }}>
               <div className="h-full w-full max-w-[900px] mx-auto">
                 <Preview value={activeNote?.content || ''} fontSize={fontSize} images={images} />
               </div>

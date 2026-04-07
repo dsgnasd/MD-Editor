@@ -3,7 +3,20 @@ import { useEffect, useState } from 'react';
 const themeKey = 'md-editor-theme';
 
 export const ThemeToggle = () => {
-  const [dark, setDark] = useState(() => localStorage.getItem(themeKey) === 'dark');
+  const [dark, setDark] = useState(() => {
+    const saved = localStorage.getItem(themeKey);
+    if (saved) return saved === 'dark';
+    return window.matchMedia('(prefers-color-scheme: dark)').matches;
+  });
+
+  useEffect(() => {
+    const saved = localStorage.getItem(themeKey);
+    if (!saved) {
+      const handler = (e: MediaQueryListEvent) => setDark(e.matches);
+      window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', handler);
+      return () => window.matchMedia('(prefers-color-scheme: dark)').removeEventListener('change', handler);
+    }
+  }, []);
 
   useEffect(() => {
     if (dark) {

@@ -69,6 +69,8 @@ export const App = () => {
     document.body.style.userSelect = 'none';
   }, []);
 
+  const dividerLeft = `calc(${split}% - 22px)`;
+
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
       if (!isDragging.current) return;
@@ -221,8 +223,8 @@ export const App = () => {
       <main className="relative flex flex-1 overflow-hidden">
         {panelsSwapped ? (
           <>
-            <div className="h-full bg-white dark:bg-[#131316] overflow-y-auto" style={{ width: isMobile ? (activePanel === 'preview' ? '100%' : '0%') : `${100 - split}%`, display: isMobile && activePanel !== 'preview' ? 'none' : undefined }}>
-              <div className="w-full max-w-[900px] mx-auto">
+            <div className="h-full bg-white dark:bg-[#131316] overflow-y-auto" style={{ width: isMobile ? (activePanel === 'preview' ? '100%' : '0%') : `${split}%`, display: isMobile && activePanel !== 'preview' ? 'none' : undefined }}>
+              <div className="h-full w-full max-w-[900px] mx-auto">
                 <Preview value={activeNote?.content || ''} fontSize={fontSize} images={images} />
               </div>
             </div>
@@ -231,7 +233,7 @@ export const App = () => {
               onMouseDown={handleMouseDown}
               className="absolute cursor-col-resize z-10 flex items-center justify-center group hidden sm:flex"
               style={{
-                left: `calc(${split}% - 22px)`,
+                left: dividerLeft,
                 top: 0,
                 bottom: 0,
                 width: '44px',
@@ -240,7 +242,7 @@ export const App = () => {
               <div className="w-px h-8 bg-stone-300 dark:bg-white/10 group-hover:h-10 transition-all rounded-full" />
             </div>
 
-            <div className="h-full bg-stone-50 dark:bg-[#0e0e10] overflow-y-auto" style={{ width: isMobile ? (activePanel === 'editor' ? '100%' : '0%') : `${split}%`, display: isMobile && activePanel !== 'editor' ? 'none' : undefined }}>
+            <div className="h-full bg-stone-50 dark:bg-[#0e0e10] overflow-y-auto" style={{ width: isMobile ? (activePanel === 'editor' ? '100%' : '0%') : `${100 - split}%`, display: isMobile && activePanel !== 'editor' ? 'none' : undefined }}>
               <Editor value={activeNote?.content || ''} onChange={handleChange} fontSize={fontSize - 1} images={images} onImageAdd={handleImageAdd} onImageRemove={handleImageRemove} />
             </div>
           </>
@@ -254,7 +256,7 @@ export const App = () => {
               onMouseDown={handleMouseDown}
               className="absolute cursor-col-resize z-10 flex items-center justify-center group hidden sm:flex"
               style={{
-                left: `calc(${split}% - 22px)`,
+                left: dividerLeft,
                 top: 0,
                 bottom: 0,
                 width: '44px',
@@ -264,7 +266,7 @@ export const App = () => {
             </div>
 
             <div className="h-full bg-white dark:bg-[#131316] overflow-y-auto" style={{ width: isMobile ? (activePanel === 'preview' ? '100%' : '0%') : `${100 - split}%`, display: isMobile && activePanel !== 'preview' ? 'none' : undefined }}>
-              <div className="w-full max-w-[900px] mx-auto">
+              <div className="h-full w-full max-w-[900px] mx-auto">
                 <Preview value={activeNote?.content || ''} fontSize={fontSize} images={images} />
               </div>
             </div>
@@ -294,113 +296,67 @@ export const App = () => {
       {menuOpen && (
         <div className="fixed inset-0 z-40 sm:hidden">
           <div className="absolute inset-0 bg-black/20 dark:bg-black/40" onClick={() => setMenuOpen(false)} />
-          <div className="absolute right-0 top-0 bottom-0 w-72 bg-white dark:bg-[#1a1a1e] shadow-2xl flex flex-col">
-            <div className="flex items-center justify-between px-5 py-4 border-b border-stone-200 dark:border-white/5">
-              <span className="text-sm font-medium text-stone-800 dark:text-zinc-100">Menu</span>
+          <div className="absolute right-0 top-0 bottom-0 w-80 bg-white dark:bg-[#1a1a1e] shadow-2xl flex flex-col pt-20 pb-6 px-6">
+            <div className="space-y-1">
               <button
-                onClick={() => setMenuOpen(false)}
-                className="w-8 h-8 rounded-lg flex items-center justify-center text-stone-500 dark:text-zinc-400 hover:bg-stone-100 dark:hover:bg-white/5 transition-all"
+                onClick={() => { createNewNote(); setMenuOpen(false); }}
+                className="w-full flex items-center gap-3 px-4 py-3.5 rounded-xl text-sm text-stone-700 dark:text-zinc-200 hover:bg-stone-100 dark:hover:bg-white/5 transition-all"
               >
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 5v14m-7-7h14" />
                 </svg>
+                New Note
               </button>
-            </div>
 
-            <div className="flex-1 overflow-y-auto py-4 px-5 space-y-4">
-              <div>
-                <label className="text-xs font-medium text-stone-500 dark:text-zinc-400 uppercase tracking-wider">Notes</label>
-                <button
-                  onClick={() => { createNewNote(); setMenuOpen(false); }}
-                  className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-stone-700 dark:text-zinc-200 hover:bg-stone-100 dark:hover:bg-white/5 transition-all mt-2"
-                >
-                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 5v14m-7-7h14" />
-                  </svg>
-                  New Note
-                </button>
-                {noteCount > 0 && (
-                  <span className="block mt-1 text-xs text-stone-400 dark:text-zinc-500">{noteCount} {noteCount === 1 ? 'note' : 'notes'}</span>
-                )}
+              <button
+                onClick={() => { download(); setMenuOpen(false); }}
+                className="w-full flex items-center gap-3 px-4 py-3.5 rounded-xl text-sm text-stone-700 dark:text-zinc-200 hover:bg-stone-100 dark:hover:bg-white/5 transition-all"
+              >
+                <svg className="w-[18px] h-[18px]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
+                </svg>
+                Download .md
+              </button>
+
+              <div className="h-px bg-stone-200 dark:bg-white/10 my-2" />
+
+              <div className="flex items-center justify-between px-4 py-3.5 rounded-xl hover:bg-stone-100 dark:hover:bg-white/5 transition-all">
+                <span className="text-sm text-stone-700 dark:text-zinc-200">Theme</span>
+                <ThemeToggle />
               </div>
 
-              <div className="border-t border-stone-200 dark:border-white/5 pt-4">
-                <label className="text-xs font-medium text-stone-500 dark:text-zinc-400 uppercase tracking-wider">Font Size</label>
-                <div className="flex items-center gap-2 mt-2">
+              <div className="flex items-center justify-between px-4 py-3.5 rounded-xl hover:bg-stone-100 dark:hover:bg-white/5 transition-all">
+                <span className="text-sm text-stone-700 dark:text-zinc-200">Font Size</span>
+                <div className="flex items-center gap-1">
                   <button
                     onClick={() => setFontSize(Math.max(14, fontSize - 1))}
                     disabled={fontSize <= 14}
-                    className="w-10 h-10 rounded-xl flex items-center justify-center text-stone-600 dark:text-zinc-300 hover:bg-stone-100 dark:hover:bg-white/5 transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+                    className="w-7 h-7 rounded-lg flex items-center justify-center text-sm text-stone-600 dark:text-zinc-300 hover:bg-stone-100 dark:hover:bg-white/5 disabled:opacity-30 disabled:cursor-not-allowed"
                   >
-                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14" />
-                    </svg>
+                    −
                   </button>
-                  <span className="w-8 text-center text-sm font-medium text-stone-800 dark:text-zinc-100">{fontSize}</span>
+                  <span className="w-5 text-center text-sm font-medium text-stone-800 dark:text-zinc-100">{fontSize}</span>
                   <button
                     onClick={() => setFontSize(Math.min(18, fontSize + 1))}
                     disabled={fontSize >= 18}
-                    className="w-10 h-10 rounded-xl flex items-center justify-center text-stone-600 dark:text-zinc-300 hover:bg-stone-100 dark:hover:bg-white/5 transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+                    className="w-7 h-7 rounded-lg flex items-center justify-center text-sm text-stone-600 dark:hover:bg-white/5 disabled:opacity-30 disabled:cursor-not-allowed"
                   >
-                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 5v14m-7-7h14" />
-                    </svg>
+                    +
                   </button>
                 </div>
               </div>
 
-              <div className="border-t border-stone-200 dark:border-white/5 pt-4">
-                <label className="text-xs font-medium text-stone-500 dark:text-zinc-400 uppercase tracking-wider">Actions</label>
-                <div className="space-y-1 mt-2">
-                  <button
-                    onClick={() => { download(); setMenuOpen(false); }}
-                    className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-stone-700 dark:text-zinc-200 hover:bg-stone-100 dark:hover:bg-white/5 transition-all"
-                  >
-                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
-                    </svg>
-                    Download .md
-                  </button>
-                  <button
-                    onClick={() => { setPanelsSwapped(!panelsSwapped); setMenuOpen(false); }}
-                    className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-stone-700 dark:text-zinc-200 hover:bg-stone-100 dark:hover:bg-white/5 transition-all"
-                  >
-                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" />
-                    </svg>
-                    Swap Panels
-                  </button>
-                </div>
+              <div className="flex items-center justify-between px-4 py-3.5 rounded-xl hover:bg-stone-100 dark:hover:bg-white/5 transition-all">
+                <span className="text-sm text-stone-700 dark:text-zinc-200">Font</span>
+                <FontSelector />
               </div>
 
-              <div className="border-t border-stone-200 dark:border-white/5 pt-4">
-                <label className="text-xs font-medium text-stone-500 dark:text-zinc-400 uppercase tracking-wider">Settings</label>
-                <div className="flex items-center justify-between mt-2">
-                  <span className="text-sm text-stone-700 dark:text-zinc-200">Theme</span>
-                  <ThemeToggle />
-                </div>
-                <div className="flex items-center justify-between mt-3">
-                  <span className="text-sm text-stone-700 dark:text-zinc-200">Font</span>
-                  <FontSelector />
-                </div>
-              </div>
-
-              <div className="border-t border-stone-200 dark:border-white/5 pt-4">
-                <label className="text-xs font-medium text-stone-500 dark:text-zinc-400 uppercase tracking-wider">Help</label>
-                <button
-                  onClick={() => { setHelpOpen(true); setMenuOpen(false); }}
-                  className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-stone-700 dark:text-zinc-200 hover:bg-stone-100 dark:hover:bg-white/5 transition-all mt-2"
-                >
-                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75c0 1.014-.822 1.836-1.836 1.836H9.5c-1.014 0-1.836-.822-1.836-1.836v-.75c0-.828-.705-1.466-1.45-1.827a2.001 2.001 0 01-.67-.442c-1.172-1.025-1.172-2.687 0-3.712zM12 15.75h.008v.008H12v-.008z" />
-                  </svg>
-                  Markdown Cheatsheet
-                </button>
-              </div>
-            </div>
-
-            <div className="px-5 py-3 border-t border-stone-200 dark:border-white/5">
-              <span className="text-xs text-stone-400 dark:text-zinc-500">{formatWords(wordCount)}</span>
+              <button
+                onClick={() => { setHelpOpen(true); setMenuOpen(false); }}
+                className="w-full px-4 py-3.5 rounded-xl text-sm text-stone-700 dark:text-zinc-200 hover:bg-stone-100 dark:hover:bg-white/5 transition-all text-left"
+              >
+                Markdown Tips
+              </button>
             </div>
           </div>
         </div>

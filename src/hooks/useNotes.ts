@@ -1,19 +1,5 @@
-import { useState, useCallback, useEffect, useMemo } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import type { Note } from '../types';
-
-const NOTES_KEY = 'md-editor-notes';
-
-const loadNotes = (): Note[] => {
-  try {
-    const raw = localStorage.getItem(NOTES_KEY);
-    if (raw) return JSON.parse(raw);
-  } catch {}
-  return [];
-};
-
-const saveNotes = (notes: Note[]) => {
-  localStorage.setItem(NOTES_KEY, JSON.stringify(notes));
-};
 
 const getNoteIdFromUrl = (): string | null => {
   const params = new URLSearchParams(window.location.search);
@@ -22,7 +8,7 @@ const getNoteIdFromUrl = (): string | null => {
 
 const createNote = (): Note => ({
   id: Date.now().toString(36) + Math.random().toString(36).slice(2, 7),
-  title: 'Заметка',
+  title: 'Note',
   content: '',
   images: [],
   createdAt: Date.now(),
@@ -33,25 +19,17 @@ export const useNotes = () => {
   const urlNoteId = useMemo(() => getNoteIdFromUrl(), []);
 
   const [notes, setNotes] = useState<Note[]>(() => {
-    const all = loadNotes();
-    if (urlNoteId && !all.find((n) => n.id === urlNoteId)) {
+    if (urlNoteId) {
       const note = createNote();
       note.id = urlNoteId;
-      return [note, ...all];
-    }
-    if (all.length === 0) {
-      const note = createNote();
       return [note];
     }
-    return all;
+    const note = createNote();
+    return [note];
   });
 
   const activeNoteId = urlNoteId || (notes[0]?.id || '');
   const activeNote = notes.find((n) => n.id === activeNoteId) || null;
-
-  useEffect(() => {
-    saveNotes(notes);
-  }, [notes]);
 
   const createNewNote = useCallback(() => {
     const note = createNote();

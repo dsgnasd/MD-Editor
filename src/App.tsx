@@ -161,7 +161,7 @@ export const App = () => {
       <header className={`sticky top-0 z-50 flex items-center justify-between px-4 py-2 border-b border-stone-200 dark:border-white/5 bg-white/80 dark:bg-[#0e0e10]/80 backdrop-blur-xl ${minimalMode ? 'hidden' : ''}`}>
         <div className="flex flex-col shrink-0">
           <h1 className="text-lg font-semibold text-stone-800 dark:text-zinc-100 tracking-tight whitespace-nowrap">MD Persona</h1>
-          <span className="hidden lg:block text-xs text-stone-500 dark:text-zinc-400 mt-0.5">Secure local editor — create, edit, save md without cloud or database</span>
+          <span className="hidden lg:block text-xs text-stone-500 dark:text-zinc-400 mt-0.5">Simple Markdown editor for fast writing and clean preview</span>
         </div>
         <div className="flex items-center gap-1 shrink-0">
           <button
@@ -506,7 +506,7 @@ export const App = () => {
               </button>
 
               <div className="mt-4 pt-4 border-t border-stone-200 dark:border-white/10">
-                <p className="text-sm text-stone-500 dark:text-zinc-400">Secure local editor — create, edit, save md without cloud or database</p>
+                <p className="text-sm text-stone-500 dark:text-zinc-400">Simple Markdown editor for fast writing and clean preview</p>
               </div>
             </div>
           </div>

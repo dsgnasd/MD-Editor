@@ -389,9 +389,7 @@ export const App = () => {
             >
               Markdown tips
             </button>
-            <a href="https://www.buymeacoffee.com/dsgna" target="_blank" rel="noopener noreferrer" className="ml-2">
-              <img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style={{ height: '30px' }} />
-            </a>
+            <a href="https://www.buymeacoffee.com/dsgna" className="ml-2"><img src="https://img.buymeacoffee.com/button-api/?text=Buy me a coffee&emoji=&slug=dsgna&button_colour=ffffff&font_colour=000000&font_family=Inter&outline_colour=000000&coffee_colour=FFDD00" /></a>
           </div>
         </footer>
       )}
@@ -510,9 +508,7 @@ export const App = () => {
 
               <div className="mt-4 pt-4 border-t border-stone-200 dark:border-white/10">
                 <div className="flex justify-center mb-4">
-                  <a href="https://www.buymeacoffee.com/dsgna" target="_blank" rel="noopener noreferrer">
-                    <img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" height="50" style={{ height: '50px' }} />
-                  </a>
+                  <a href="https://www.buymeacoffee.com/dsgna"><img src="https://img.buymeacoffee.com/button-api/?text=Buy me a coffee&emoji=&slug=dsgna&button_colour=ffffff&font_colour=000000&font_family=Inter&outline_colour=000000&coffee_colour=FFDD00" /></a>
                 </div>
                 <p className="text-sm text-stone-500 dark:text-zinc-400 text-center">Simple Markdown editor for fast writing and clean preview</p>
               </div>

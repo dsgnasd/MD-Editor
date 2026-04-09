@@ -15,7 +15,6 @@ export const App = () => {
     activeNoteId,
     createNewNote,
     updateNoteContent,
-    updateNoteImages,
   } = useNotes();
 
   const [split, setSplit] = useState(50);
@@ -36,18 +35,6 @@ export const App = () => {
   const [copied, setCopied] = useState(false);
   const [copiedVisible, setCopiedVisible] = useState(false);
   const isDragging = useRef(false);
-
-  const images = activeNote ? new Map(activeNote.images) : new Map<string, string>();
-
-  const handleImageAdd = useCallback((name: string, dataUrl: string) => {
-    if (!activeNoteId || !activeNote) return;
-    updateNoteImages(activeNoteId, [...activeNote.images, [name, dataUrl]]);
-  }, [activeNoteId, activeNote, updateNoteImages]);
-
-  const handleImageRemove = useCallback((name: string) => {
-    if (!activeNoteId || !activeNote) return;
-    updateNoteImages(activeNoteId, activeNote.images.filter(([n]) => n !== name));
-  }, [activeNoteId, activeNote, updateNoteImages]);
 
   const download = useCallback(() => {
     if (!activeNote) return;
@@ -307,7 +294,7 @@ export const App = () => {
         {minimalMode ? (
           <div className="h-full w-full bg-white dark:bg-dark-secondary overflow-y-auto px-4 sm:px-0">
             <div className="h-full w-full max-w-[900px] mx-auto">
-              <Preview value={activeNote?.content || ''} fontSize={fontSize} images={images} />
+              <Preview value={activeNote?.content || ''} fontSize={fontSize} />
             </div>
           </div>
         ) : (
@@ -315,7 +302,7 @@ export const App = () => {
           <>
             <div className="h-full bg-white dark:bg-dark-secondary overflow-y-auto px-4 sm:px-0" style={{ width: isMobile ? (activePanel === 'preview' ? '100%' : '0%') : `${split}%`, display: isMobile && activePanel !== 'preview' ? 'none' : undefined }}>
               <div className="h-full w-full max-w-[900px] mx-auto">
-                <Preview value={activeNote?.content || ''} fontSize={fontSize} images={images} />
+                <Preview value={activeNote?.content || ''} fontSize={fontSize} />
               </div>
             </div>
 
@@ -333,13 +320,13 @@ export const App = () => {
             </div>
 
             <div className="h-full bg-stone-50 dark:bg-dark-primary overflow-y-auto px-4 sm:px-0" style={{ width: isMobile ? (activePanel === 'editor' ? '100%' : '0%') : `${100 - split}%`, display: isMobile && activePanel !== 'editor' ? 'none' : undefined }}>
-              <Editor value={activeNote?.content || ''} onChange={handleChange} fontSize={fontSize - 1} images={images} onImageAdd={handleImageAdd} onImageRemove={handleImageRemove} onCopied={() => setCopied(true)} />
+              <Editor value={activeNote?.content || ''} onChange={handleChange} fontSize={fontSize - 1} onCopied={() => setCopied(true)} />
             </div>
           </>
         ) : (
           <>
             <div className="h-full bg-stone-50 dark:bg-dark-primary overflow-y-auto px-4 sm:px-0" style={{ width: isMobile ? (activePanel === 'editor' ? '100%' : '0%') : `${split}%`, display: isMobile && activePanel !== 'editor' ? 'none' : undefined }}>
-              <Editor value={activeNote?.content || ''} onChange={handleChange} fontSize={fontSize - 1} images={images} onImageAdd={handleImageAdd} onImageRemove={handleImageRemove} onCopied={() => setCopied(true)} />
+              <Editor value={activeNote?.content || ''} onChange={handleChange} fontSize={fontSize - 1} onCopied={() => setCopied(true)} />
             </div>
 
             <div
@@ -357,7 +344,7 @@ export const App = () => {
 
             <div className="h-full bg-white dark:bg-dark-secondary overflow-y-auto px-4 sm:px-0" style={{ width: isMobile ? (activePanel === 'preview' ? '100%' : '0%') : `${100 - split}%`, display: isMobile && activePanel !== 'preview' ? 'none' : undefined }}>
               <div className="h-full w-full max-w-[900px] mx-auto">
-                <Preview value={activeNote?.content || ''} fontSize={fontSize} images={images} />
+                <Preview value={activeNote?.content || ''} fontSize={fontSize} />
               </div>
             </div>
           </>

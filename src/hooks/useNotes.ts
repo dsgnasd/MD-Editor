@@ -4,6 +4,26 @@ import type { Note } from '../types';
 const OPEN_NOTE_IDS_KEY = 'md-editor-open-note-ids';
 const NOTE_PREFIX = 'md-editor-note-';
 
+// One-time cleanup: strip any legacy `images` field from previously stored notes
+// so that data URLs from removed image feature don't linger in localStorage.
+(() => {
+  try {
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (!key || !key.startsWith(NOTE_PREFIX)) continue;
+      const raw = localStorage.getItem(key);
+      if (!raw) continue;
+      const parsed = JSON.parse(raw);
+      if (parsed && typeof parsed === 'object' && 'images' in parsed) {
+        delete parsed.images;
+        localStorage.setItem(key, JSON.stringify(parsed));
+      }
+    }
+  } catch (err) {
+    console.error('Failed to migrate legacy notes:', err);
+  }
+})();
+
 const getNoteIdFromUrl = (): string | null => {
   const params = new URLSearchParams(window.location.search);
   return params.get('noteId');
@@ -32,12 +52,15 @@ const loadNoteContent = (noteId: string): Partial<Note> | null => {
 };
 
 const saveNoteContent = (note: Note) => {
-  localStorage.setItem(NOTE_PREFIX + note.id, JSON.stringify({
-    content: note.content,
-    title: note.title,
-    images: note.images,
-    updatedAt: note.updatedAt,
-  }));
+  try {
+    localStorage.setItem(NOTE_PREFIX + note.id, JSON.stringify({
+      content: note.content,
+      title: note.title,
+      updatedAt: note.updatedAt,
+    }));
+  } catch (err) {
+    console.error('Failed to save note to localStorage:', err);
+  }
 };
 
 const deleteNoteContent = (noteId: string) => {
@@ -50,7 +73,6 @@ const createNote = (content?: string): Note => {
     id,
     title: 'Note',
     content: content || '',
-    images: [],
     createdAt: Date.now(),
     updatedAt: Date.now(),
   };
@@ -67,7 +89,6 @@ export const useNotes = () => {
       note.id = urlNoteId;
       if (saved) {
         note.title = saved.title || 'Note';
-        note.images = saved.images || [];
         note.updatedAt = saved.updatedAt || Date.now();
       }
       return [note];
@@ -103,7 +124,7 @@ export const useNotes = () => {
 
   const createNewNote = useCallback(() => {
     const note = createNote();
-    window.open(`?noteId=${note.id}`, '_blank');
+    window.open(`?noteId=${note.id}`, '_blank', 'noopener,noreferrer');
   }, []);
 
   const deleteNote = useCallback((id: string) => {
@@ -140,19 +161,6 @@ export const useNotes = () => {
     );
   }, []);
 
-  const updateNoteImages = useCallback((id: string, images: [string, string][]) => {
-    setNotes((prev) =>
-      prev.map((n) => {
-        if (n.id === id) {
-          const updated = { ...n, images, updatedAt: Date.now() };
-          saveNoteContent(updated);
-          return updated;
-        }
-        return n;
-      })
-    );
-  }, []);
-
   return {
     notes,
     activeNote,
@@ -161,6 +169,5 @@ export const useNotes = () => {
     deleteNote,
     renameNote,
     updateNoteContent,
-    updateNoteImages,
   };
 };

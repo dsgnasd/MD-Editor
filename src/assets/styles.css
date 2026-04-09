@@ -173,11 +173,6 @@ body,
   background: #27272a;
 }
 
-.preview img {
-  border-radius: 8px;
-  margin: 1.25em 0;
-}
-
 .preview strong {
   font-weight: 600;
   color: #18181b;

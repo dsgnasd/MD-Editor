@@ -63,7 +63,7 @@ print(fibonacci(10))
 
 ---
 
-## Ссылки и изображения
+## Ссылки
 
 [Ссылка на Google](https://google.com)
 

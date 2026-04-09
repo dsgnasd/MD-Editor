@@ -1,14 +1,11 @@
 import { renderMarkdown } from '../utils/markdownParser';
 
-type ImageMap = Map<string, string>;
-
 type PreviewProps = {
   value: string;
   fontSize: number;
-  images: ImageMap;
 };
 
-export const Preview = ({ value, fontSize, images }: PreviewProps) => {
+export const Preview = ({ value, fontSize }: PreviewProps) => {
   if (!value.trim()) {
     return (
       <div className="flex items-center justify-center min-h-full px-4 sm:px-0 text-zinc-400 dark:text-zinc-400">
@@ -19,18 +16,7 @@ export const Preview = ({ value, fontSize, images }: PreviewProps) => {
     );
   }
 
-  const expandedValue = value.replace(
-    /!\[([^\]]+)\](?!\()/g,
-    (match, name) => {
-      const dataUrl = images.get(name);
-      if (dataUrl) {
-        return `![${name}](${dataUrl})`;
-      }
-      return match;
-    }
-  );
-
-  const html = renderMarkdown(expandedValue);
+  const html = renderMarkdown(value);
 
   return (
     <div

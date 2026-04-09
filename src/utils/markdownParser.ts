@@ -24,6 +24,8 @@ export const renderMarkdown = (content: string): string => {
                    'blockquote', 'pre', 'code', 'a', 'strong', 'em', 'del', 'table',
                    'thead', 'tbody', 'tr', 'th', 'td', 'span', 'div'],
     ALLOWED_ATTR: ['href', 'title', 'class', 'target', 'rel'],
+    ADD_ATTR: ['rel'],
+    FORBID_ATTR: ['onclick', 'onerror', 'onload'],
   });
 };
 

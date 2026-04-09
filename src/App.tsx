@@ -113,7 +113,7 @@ export const App = () => {
   useEffect(() => {
     if (!minimalMode) return;
     setShowMinimalHint(true);
-    const timeout = setTimeout(() => setShowMinimalHint(false), 3000);
+    const timeout = setTimeout(() => setShowMinimalHint(false), 5000);
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') setMinimalMode(false);
     };

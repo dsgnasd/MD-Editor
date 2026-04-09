@@ -210,19 +210,17 @@ export const App = () => {
 
       <main className="relative flex flex-1 overflow-hidden">
         {minimalMode ? (
-          <div className="h-full w-full bg-white dark:bg-dark-secondary overflow-y-auto px-4 sm:px-0">
-            <div className="h-full w-full max-w-[900px] mx-auto">
-              <div className="sticky top-0 flex justify-end py-2 pr-2">
-                <button
-                  onClick={() => setMinimalMode(false)}
-                  className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm text-stone-400 dark:text-zinc-500 hover:text-stone-600 dark:hover:text-zinc-300 hover:bg-stone-100 dark:hover:bg-white/5 transition-all"
-                >
-                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-                  </svg>
-                  Exit
-                </button>
-              </div>
+          <div className="h-full w-full bg-white dark:bg-dark-secondary overflow-y-auto">
+            <button
+              onClick={() => setMinimalMode(false)}
+              className="absolute top-[14px] right-4 hidden sm:flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm text-stone-400 dark:text-zinc-500 hover:text-stone-600 dark:hover:text-zinc-300 hover:bg-stone-100 dark:hover:bg-white/5 transition-all duration-200 z-10"
+            >
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
+              </svg>
+              Minimal
+            </button>
+            <div className="h-full w-full max-w-[900px] mx-auto px-4 sm:px-0">
               <Preview value={activeNote?.content || ''} fontSize={fontSize} />
             </div>
           </div>

@@ -212,6 +212,17 @@ export const App = () => {
         {minimalMode ? (
           <div className="h-full w-full bg-white dark:bg-dark-secondary overflow-y-auto px-4 sm:px-0">
             <div className="h-full w-full max-w-[900px] mx-auto">
+              <div className="sticky top-0 flex justify-end py-2 pr-2">
+                <button
+                  onClick={() => setMinimalMode(false)}
+                  className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm text-stone-400 dark:text-zinc-500 hover:text-stone-600 dark:hover:text-zinc-300 hover:bg-stone-100 dark:hover:bg-white/5 transition-all"
+                >
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                  </svg>
+                  Exit
+                </button>
+              </div>
               <Preview value={activeNote?.content || ''} fontSize={fontSize} />
             </div>
           </div>

@@ -108,7 +108,7 @@ export const App = () => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
         setMinimalHintVisible(false);
-        setTimeout(() => setShowMinimalHint(false), 300);
+        setMinimalMode(false);
       }
     };
     window.addEventListener('keydown', handleKeyDown);

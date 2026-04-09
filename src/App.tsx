@@ -475,6 +475,8 @@ export const App = () => {
                 </div>
               )}
 
+              <div className="h-px bg-stone-200 dark:bg-white/10 my-2" />
+
               <button
                 onClick={() => { setHelpOpen(true); setMenuOpen(false); }}
                 className="w-full px-4 py-4 rounded-xl text-sm text-stone-700 dark:text-zinc-200 hover:bg-stone-100 dark:hover:bg-white/5 transition-all text-left h-14"

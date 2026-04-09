@@ -221,6 +221,8 @@ export const App = () => {
             <FontSelector font={font} onFontChange={setFont} />
           </div>
 
+          <div className="hidden sm:block w-px h-4 bg-stone-200 dark:bg-white/10 mx-1" />
+
           <button
             onClick={() => setMinimalMode(!minimalMode)}
             className={`hidden sm:flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm transition-all duration-200 ${

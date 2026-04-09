@@ -259,6 +259,13 @@ export const Editor = ({ value, onChange, fontSize, images, onImageAdd, onImageR
   }, [applyFormat, setValue, value, pushHistory]);
 
   useEffect(() => {
+    const timer = setTimeout(() => {
+      taRef.current?.focus();
+    }, 100);
+    return () => clearTimeout(timer);
+  }, []);
+
+  useEffect(() => {
     if (!skipHistoryRef.current) {
       pushHistory(value);
     }

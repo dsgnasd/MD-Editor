@@ -366,13 +366,13 @@ export const App = () => {
       </main>
 
       {minimalMode && showMinimalHint && (
-        <div className={`fixed bottom-6 left-1/2 -translate-x-1/2 px-4 py-2.5 bg-stone-900/90 dark:bg-zinc-100/90 text-white dark:text-zinc-900 text-sm font-medium rounded-full shadow-xl backdrop-blur-sm border border-white/10 dark:border-zinc-200/20 transition-all duration-300 ${minimalHintVisible ? 'opacity-100 translate-y-0 animate-fade-in' : 'opacity-0 translate-y-1'}`}>
+        <div className={`fixed bottom-6 left-1/2 transform -translate-x-1/2 px-4 py-2.5 bg-stone-900/90 dark:bg-zinc-100/90 text-white dark:text-zinc-900 text-sm font-medium rounded-full shadow-xl backdrop-blur-sm border border-white/10 dark:border-zinc-200/20 transition-all duration-300 ${minimalHintVisible ? 'opacity-100 translate-y-0 animate-fade-in' : 'opacity-0 translate-y-1'}`}>
           Press <span className="opacity-70">Esc</span> to exit
         </div>
       )}
 
       {copied && (
-        <div className={`fixed bottom-16 left-1/2 -translate-x-1/2 px-4 py-2.5 bg-stone-900/90 dark:bg-zinc-100/90 text-white dark:text-zinc-900 text-sm font-medium rounded-full shadow-xl backdrop-blur-sm border border-white/10 dark:border-zinc-200/20 transition-all duration-300 ${copiedVisible ? 'opacity-100 translate-y-0 animate-fade-in' : 'opacity-0 translate-y-1'}`}>
+        <div className={`fixed bottom-16 left-1/2 transform -translate-x-1/2 px-4 py-2.5 bg-stone-900/90 dark:bg-zinc-100/90 text-white dark:text-zinc-900 text-sm font-medium rounded-full shadow-xl backdrop-blur-sm border border-white/10 dark:border-zinc-200/20 transition-all duration-300 ${copiedVisible ? 'opacity-100 translate-y-0 animate-fade-in' : 'opacity-0 translate-y-1'}`}>
           Copied to clipboard
         </div>
       )}

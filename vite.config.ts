@@ -6,7 +6,6 @@ export default defineConfig({
   base: '/MD-Editor/',
   server: {
     port: 5174,
-    open: true,
   },
   build: {
     outDir: 'dist',

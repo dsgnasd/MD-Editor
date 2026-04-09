@@ -6,7 +6,6 @@ import { FontSelector } from './components/FontSelector';
 import { ThemeToggle } from './components/ThemeToggle';
 import { HelpDialog } from './components/HelpDialog';
 import { fonts, fontKey } from './utils/constants';
-import html2pdf from 'html2pdf.js';
 import md from './utils/markdownParser';
 
 export const App = () => {
@@ -158,67 +157,7 @@ export const App = () => {
 
   const noteCount = notes.length;
 
-  const exportPDF = useCallback(async () => {
-    if (!activeNote) return;
-    
-    const firstLine = activeNote.content.split('\n')[0]?.replace(/^[#\s]+/, '').trim() || 'note';
-    const safeName = firstLine.replace(/[<>:"/\\|?*]/g, '').slice(0, 50) || 'note';
-    
-    const images = activeNote ? new Map(activeNote.images) : new Map<string, string>();
-    const expandedValue = activeNote.content.replace(
-      /!\[([^\]]+)\](?!\()/g,
-      (match, name) => {
-        const dataUrl = images.get(name);
-        if (dataUrl) return `![${name}](${dataUrl})`;
-        return match;
-      }
-    );
-    
-    const html = md.render(expandedValue);
-    
-    const element = document.createElement('div');
-    element.innerHTML = html;
-    
-    const addStyles = (selector: string, styles: Record<string, string>) => {
-      element.querySelectorAll(selector).forEach(el => {
-        Object.assign((el as HTMLElement).style, styles);
-      });
-    };
-    
-    const bodyStyle = 'font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 16px; line-height: 1.75; color: #1c1917; background: #ffffff; padding: 40px;';
-    element.setAttribute('style', bodyStyle);
-    
-    addStyles('p', { marginTop: '0', marginBottom: '1em' });
-    addStyles('h1', { fontSize: '2em', fontWeight: '700', marginTop: '1.5em', marginBottom: '0.5em' });
-    addStyles('h2', { fontSize: '1.5em', fontWeight: '600', marginTop: '1.5em', marginBottom: '0.5em' });
-    addStyles('h3', { fontSize: '1.25em', fontWeight: '600', marginTop: '1.5em', marginBottom: '0.5em' });
-    addStyles('h4', { fontSize: '1.1em', fontWeight: '600', marginTop: '1.5em', marginBottom: '0.5em' });
-    addStyles('ul', { paddingLeft: '1.5em', marginBottom: '1em' });
-    addStyles('ol', { paddingLeft: '1.5em', marginBottom: '1em' });
-    addStyles('li', { marginBottom: '0.25em' });
-    addStyles('blockquote', { borderLeft: '4px solid #e5e7eb', paddingLeft: '1em', fontStyle: 'italic', color: '#6b7280' });
-    addStyles('code', { background: '#f5f5f5', padding: '0.2em 0.4em', borderRadius: '0.25em', fontFamily: 'monospace' });
-    addStyles('pre', { background: '#1f2937', color: '#f9fafb', padding: '1em', borderRadius: '0.5em', overflowX: 'auto' });
-    addStyles('img', { maxWidth: '100%', height: 'auto' });
-    addStyles('table', { borderCollapse: 'collapse', width: '100%', marginBottom: '1em' });
-    addStyles('th, td', { border: '1px solid #e5e7eb', padding: '0.5em 1em', textAlign: 'left' });
-    addStyles('a', { color: '#2563eb', textDecoration: 'underline' });
-    addStyles('hr', { border: 'none', borderTop: '1px solid #e5e7eb', margin: '1.5em 0' });
-    
-    document.body.appendChild(element);
-    
-    await document.fonts.ready;
-    
-    html2pdf().set({
-      margin: 10,
-      filename: `${safeName}.pdf`,
-      image: { type: 'jpeg', quality: 0.98 },
-      html2canvas: { scale: 2, useCORS: true },
-      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-    }).from(element).save().then(() => {
-      document.body.removeChild(element);
-    });
-  }, [activeNote]);
+
 
   return (
     <div className="flex flex-col h-screen bg-stone-50 dark:bg-[#0e0e10] transition-colors duration-300 overflow-visible">
@@ -248,17 +187,6 @@ export const App = () => {
               <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
             </svg>
             <span className="hidden sm:inline">Download</span>
-          </button>
-
-          <button
-            onClick={exportPDF}
-            className="hidden sm:flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm text-stone-600 dark:text-zinc-300 hover:text-stone-900 dark:hover:text-zinc-100 hover:bg-stone-100 dark:hover:bg-white/5 transition-all duration-200"
-            title="Export PDF"
-          >
-            <svg className="w-[18px] h-[18px]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
-            </svg>
-            <span className="hidden sm:inline">PDF</span>
           </button>
 
           <div className="hidden sm:block w-px h-4 bg-stone-200 dark:bg-white/10 mx-1" />
@@ -438,13 +366,12 @@ export const App = () => {
             <span className="text-[11px] text-stone-500 dark:text-zinc-400 px-2 tabular-nums font-medium">
               {formatWords(wordCount)}
             </span>
-            <button
+              <button
               onClick={() => setHelpOpen(true)}
               className="px-2.5 py-1 rounded-lg text-[11px] font-medium text-stone-500 dark:text-zinc-400 hover:text-stone-800 dark:hover:text-zinc-200 hover:bg-stone-100 dark:hover:bg-white/5 transition-all duration-200"
             >
               Markdown tips
             </button>
-            <a href="https://www.buymeacoffee.com/dsgna" className="ml-2"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy me a coffee" style={{ height: '25px' }} /></a>
           </div>
         </footer>
       )}
@@ -474,45 +401,6 @@ export const App = () => {
                   <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
                 </svg>
                 Download .md
-              </button>
-
-              <button
-                onClick={() => {
-                  const preview = document.querySelector('.preview');
-                  if (!preview || !activeNote) return;
-                  const firstLine = activeNote.content.split('\n')[0]?.replace(/^[#\s]+/, '').trim() || 'note';
-                  const safeName = firstLine.replace(/[<>:"/\\|?*]/g, '').slice(0, 50) || 'note';
-                  
-                  const element = document.createElement('div');
-                  element.innerHTML = preview.innerHTML;
-                  element.style.background = '#ffffff';
-                  element.style.color = '#1c1917';
-                  element.style.padding = '40px';
-                  element.style.maxWidth = '100%';
-                  element.style.position = 'absolute';
-                  element.style.left = '-9999px';
-                  element.style.fontFamily = 'Inter, sans-serif';
-                  element.style.lineHeight = '1.75';
-                  element.style.fontSize = '16px';
-                  document.body.appendChild(element);
-                  
-                  html2pdf().set({
-                    margin: 10,
-                    filename: `${safeName}.pdf`,
-                    image: { type: 'jpeg', quality: 0.98 },
-                    html2canvas: { scale: 2, useCORS: true },
-                    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-                  }).from(element).save().then(() => {
-                    document.body.removeChild(element);
-                  });
-                  setMenuOpen(false);
-                }}
-                className="w-full flex items-center gap-3 px-4 py-4 rounded-xl text-sm text-stone-700 dark:text-zinc-200 hover:bg-stone-100 dark:hover:bg-white/5 transition-all h-14"
-              >
-                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
-                </svg>
-                Export PDF
               </button>
 
               <div className="h-px bg-stone-200 dark:bg-white/10 my-2" />
@@ -581,9 +469,6 @@ export const App = () => {
               </button>
 
               <div className="mt-4 pt-4 border-t border-stone-200 dark:border-white/10">
-                <div className="flex justify-center mb-4">
-                  <a href="https://www.buymeacoffee.com/dsgna"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy me a coffee" style={{ height: '50px' }} /></a>
-                </div>
                 <p className="text-sm text-stone-500 dark:text-zinc-400 text-center">Simple Markdown editor for fast writing and clean preview</p>
               </div>
             </div>

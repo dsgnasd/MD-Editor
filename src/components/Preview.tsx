@@ -1,4 +1,4 @@
-import md from '../utils/markdownParser';
+import { renderMarkdown } from '../utils/markdownParser';
 
 type ImageMap = Map<string, string>;
 
@@ -30,7 +30,7 @@ export const Preview = ({ value, fontSize, images }: PreviewProps) => {
     }
   );
 
-  const html = md.render(expandedValue);
+  const html = renderMarkdown(expandedValue);
 
   return (
     <div

@@ -48,7 +48,7 @@ const Dropdown = ({
       {open && (
         <>
           <div className="fixed inset-0 z-20" onClick={() => setOpen(false)} />
-          <div className={`absolute right-0 ${getDropdownPosition()} w-52 bg-white dark:bg-zinc-900 border border-stone-200 dark:border-white/10 rounded-xl shadow-[0_8px_40px_rgba(0,0,0,0.12)] dark:shadow-[0_8px_40px_rgba(0,0,0,0.4)] z-30 overflow-hidden`}>
+          <div className={`absolute right-0 ${getDropdownPosition()} w-52 bg-white dark:bg-zinc-900 border border-stone-200 dark:border-white/10 rounded-xl shadow-soft dark:shadow-soft-dark z-30 overflow-hidden`}>
             <div className="p-1">
               {options.map(id => (
                 <button

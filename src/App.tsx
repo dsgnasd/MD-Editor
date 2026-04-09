@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef, useEffect, useMemo } from 'react';
+import { useState, useCallback, useRef, useEffect } from 'react';
 import { useNotes } from './hooks/useNotes';
 import { Editor } from './components/Editor';
 import { Preview } from './components/Preview';
@@ -14,7 +14,6 @@ export const App = () => {
     activeNote,
     activeNoteId,
     createNewNote,
-    renameNote,
     updateNoteContent,
     updateNoteImages,
   } = useNotes();
@@ -167,8 +166,8 @@ export const App = () => {
 
 
   return (
-    <div className="flex flex-col h-screen bg-stone-50 dark:bg-[#0e0e10] transition-colors duration-300 overflow-visible">
-      <header className={`sticky top-0 z-50 flex items-center justify-between px-4 py-2 border-b border-stone-200 dark:border-white/5 bg-white/80 dark:bg-[#0e0e10]/80 backdrop-blur-xl ${minimalMode ? 'hidden' : ''}`}>
+    <div className="flex flex-col h-screen bg-stone-50 dark:bg-dark-primary transition-colors duration-300 overflow-visible">
+      <header className={`sticky top-0 z-50 flex items-center justify-between px-4 py-2 border-b border-stone-200 dark:border-white/5 bg-white/80 dark:bg-dark-primary/80 backdrop-blur-xl ${minimalMode ? 'hidden' : ''}`}>
         <div className="flex flex-col shrink-0">
           <h1 className="text-lg font-semibold text-stone-800 dark:text-zinc-100 tracking-tight whitespace-nowrap">MD Persona</h1>
           <span className="hidden lg:block text-xs text-stone-500 dark:text-zinc-400 mt-0.5">Simple Markdown editor for fast writing and clean preview</span>
@@ -252,7 +251,7 @@ export const App = () => {
         </div>
       </header>
 
-      <div className="sm:hidden flex items-center justify-center gap-2 px-4 py-2 border-b border-stone-200 dark:border-white/5 bg-white/60 dark:bg-[#0e0e10]/60 backdrop-blur-sm">
+      <div className="sm:hidden flex items-center justify-center gap-2 px-4 py-2 border-b border-stone-200 dark:border-white/5 bg-white/60 dark:bg-dark-primary/60 backdrop-blur-sm">
         <div className="relative flex-1">
           <button
             onClick={() => setActivePanel('editor')}
@@ -291,7 +290,7 @@ export const App = () => {
 
       <main className="relative flex flex-1 overflow-hidden">
         {minimalMode ? (
-          <div className="h-full w-full bg-white dark:bg-[#131316] overflow-y-auto px-4 sm:px-0">
+          <div className="h-full w-full bg-white dark:bg-dark-secondary overflow-y-auto px-4 sm:px-0">
             <div className="h-full w-full max-w-[900px] mx-auto">
               <Preview value={activeNote?.content || ''} fontSize={fontSize} images={images} />
             </div>
@@ -299,7 +298,7 @@ export const App = () => {
         ) : (
           panelsSwapped ? (
           <>
-            <div className="h-full bg-white dark:bg-[#131316] overflow-y-auto px-4 sm:px-0" style={{ width: isMobile ? (activePanel === 'preview' ? '100%' : '0%') : `${split}%`, display: isMobile && activePanel !== 'preview' ? 'none' : undefined }}>
+            <div className="h-full bg-white dark:bg-dark-secondary overflow-y-auto px-4 sm:px-0" style={{ width: isMobile ? (activePanel === 'preview' ? '100%' : '0%') : `${split}%`, display: isMobile && activePanel !== 'preview' ? 'none' : undefined }}>
               <div className="h-full w-full max-w-[900px] mx-auto">
                 <Preview value={activeNote?.content || ''} fontSize={fontSize} images={images} />
               </div>
@@ -318,13 +317,13 @@ export const App = () => {
               <div className="w-px h-8 bg-stone-300 dark:bg-white/10 group-hover:h-10 transition-all rounded-full" />
             </div>
 
-            <div className="h-full bg-stone-50 dark:bg-[#0e0e10] overflow-y-auto px-4 sm:px-0" style={{ width: isMobile ? (activePanel === 'editor' ? '100%' : '0%') : `${100 - split}%`, display: isMobile && activePanel !== 'editor' ? 'none' : undefined }}>
+            <div className="h-full bg-stone-50 dark:bg-dark-primary overflow-y-auto px-4 sm:px-0" style={{ width: isMobile ? (activePanel === 'editor' ? '100%' : '0%') : `${100 - split}%`, display: isMobile && activePanel !== 'editor' ? 'none' : undefined }}>
               <Editor value={activeNote?.content || ''} onChange={handleChange} fontSize={fontSize - 1} images={images} onImageAdd={handleImageAdd} onImageRemove={handleImageRemove} onCopied={() => setCopied(true)} />
             </div>
           </>
         ) : (
           <>
-            <div className="h-full bg-stone-50 dark:bg-[#0e0e10] overflow-y-auto px-4 sm:px-0" style={{ width: isMobile ? (activePanel === 'editor' ? '100%' : '0%') : `${split}%`, display: isMobile && activePanel !== 'editor' ? 'none' : undefined }}>
+            <div className="h-full bg-stone-50 dark:bg-dark-primary overflow-y-auto px-4 sm:px-0" style={{ width: isMobile ? (activePanel === 'editor' ? '100%' : '0%') : `${split}%`, display: isMobile && activePanel !== 'editor' ? 'none' : undefined }}>
               <Editor value={activeNote?.content || ''} onChange={handleChange} fontSize={fontSize - 1} images={images} onImageAdd={handleImageAdd} onImageRemove={handleImageRemove} onCopied={() => setCopied(true)} />
             </div>
 
@@ -341,7 +340,7 @@ export const App = () => {
               <div className="w-px h-8 bg-stone-300 dark:bg-white/10 group-hover:h-10 transition-all rounded-full" />
             </div>
 
-            <div className="h-full bg-white dark:bg-[#131316] overflow-y-auto px-4 sm:px-0" style={{ width: isMobile ? (activePanel === 'preview' ? '100%' : '0%') : `${100 - split}%`, display: isMobile && activePanel !== 'preview' ? 'none' : undefined }}>
+            <div className="h-full bg-white dark:bg-dark-secondary overflow-y-auto px-4 sm:px-0" style={{ width: isMobile ? (activePanel === 'preview' ? '100%' : '0%') : `${100 - split}%`, display: isMobile && activePanel !== 'preview' ? 'none' : undefined }}>
               <div className="h-full w-full max-w-[900px] mx-auto">
                 <Preview value={activeNote?.content || ''} fontSize={fontSize} images={images} />
               </div>
@@ -364,7 +363,7 @@ export const App = () => {
       )}
 
       {!minimalMode && (
-        <footer className="hidden sm:flex px-4 py-1 border-t border-stone-200 dark:border-white/5 bg-white/80 dark:bg-[#0e0e10]/80 backdrop-blur-xl items-center justify-between">
+        <footer className="hidden sm:flex px-4 py-1 border-t border-stone-200 dark:border-white/5 bg-white/80 dark:bg-dark-primary/80 backdrop-blur-xl items-center justify-between">
           <button
             onClick={() => setPanelsSwapped(!panelsSwapped)}
             className="flex items-center gap-1 px-2 py-1 rounded-lg text-xs text-stone-500 dark:text-zinc-400 hover:text-stone-700 dark:hover:text-zinc-200 hover:bg-stone-100 dark:hover:bg-white/5 transition-all duration-200"
@@ -394,7 +393,7 @@ export const App = () => {
       {menuOpen && (
         <div className="fixed inset-0 z-40 sm:hidden">
           <div className="absolute inset-0 bg-black/20 dark:bg-black/40" onClick={() => setMenuOpen(false)} />
-          <div className="absolute right-0 top-0 bottom-0 w-80 bg-white dark:bg-[#1a1a1e] shadow-2xl flex flex-col pt-20 pb-6 px-4 overflow-y-auto">
+          <div className="absolute right-0 top-0 bottom-0 w-80 bg-white dark:bg-dark-tertiary shadow-2xl flex flex-col pt-20 pb-6 px-4 overflow-y-auto">
             <div className="space-y-1">
               <button
                 onClick={() => { createNewNote(); setMenuOpen(false); }}

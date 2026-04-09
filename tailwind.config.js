@@ -7,6 +7,17 @@ export default {
   darkMode: 'class',
   theme: {
     extend: {
+      colors: {
+        dark: {
+          primary: '#0e0e10',
+          secondary: '#131316',
+          tertiary: '#1a1a1e',
+        },
+      },
+      boxShadow: {
+        soft: '0 8px 40px rgba(0,0,0,0.12)',
+        'soft-dark': '0 8px 40px rgba(0,0,0,0.4)',
+      },
       animation: {
         'fade-in': 'fadeIn 0.2s ease-out',
       },
@@ -19,36 +30,6 @@ export default {
       fontFamily: {
         sans: ['var(--font-sans)', 'system-ui', 'sans-serif'],
         mono: ["'JetBrains Mono'", 'monospace'],
-      },
-      colors: {
-        solarized: {
-          bg: '#fdf6e3',
-          surface: '#eee8d5',
-          text: '#657b83',
-          heading: '#586e78',
-          border: '#d3cbb8',
-        },
-        ocean: {
-          bg: '#0f1923',
-          surface: '#162231',
-          text: '#8899aa',
-          heading: '#aabbcc',
-          border: '#1e3044',
-        },
-        forest: {
-          bg: '#1a2e1a',
-          surface: '#243524',
-          text: '#a3b8a3',
-          heading: '#c5d8c5',
-          border: '#2d4a2d',
-        },
-        lavender: {
-          bg: '#f0e6f6',
-          surface: '#e8ddf0',
-          text: '#5a4a6a',
-          heading: '#4a3a5a',
-          border: '#d4c4e0',
-        },
       },
     },
   },

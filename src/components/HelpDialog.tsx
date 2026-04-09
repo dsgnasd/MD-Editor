@@ -101,7 +101,7 @@ export const HelpDialog = ({ open, onClose }: HelpDialogProps) => {
 
   const dialog = (
     <div className="fixed inset-0 z-[200] flex items-center justify-center">
-      <div className="absolute inset-0 bg-black/50 dark:bg-black/70" style={{ backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)' }} onClick={onClose} />
+      <div className="absolute inset-0 bg-black/50 dark:bg-black/70 backdrop-blur-md" onClick={onClose} />
       <div className="relative w-[90vw] max-w-4xl max-h-[85vh] bg-white dark:bg-zinc-900 rounded-2xl shadow-2xl border border-stone-200 dark:border-white/10 flex flex-col overflow-hidden">
         <div className="flex items-center justify-between px-6 py-4 border-b border-stone-200 dark:border-white/5">
           <h2 className="text-lg font-semibold text-stone-800 dark:text-zinc-100">Markdown — шпаргалка</h2>

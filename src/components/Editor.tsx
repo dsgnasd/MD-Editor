@@ -9,9 +9,10 @@ type EditorProps = {
   images: ImageMap;
   onImageAdd: (name: string, dataUrl: string) => void;
   onImageRemove: (name: string) => void;
+  onCopied?: () => void;
 };
 
-export const Editor = ({ value, onChange, fontSize, images, onImageAdd, onImageRemove }: EditorProps) => {
+export const Editor = ({ value, onChange, fontSize, images, onImageAdd, onImageRemove, onCopied }: EditorProps) => {
   const taRef = useRef<HTMLTextAreaElement>(null);
   const historyRef = useRef<string[]>([value]);
   const historyIdxRef = useRef(0);
@@ -85,6 +86,12 @@ export const Editor = ({ value, onChange, fontSize, images, onImageAdd, onImageR
       reader.readAsDataURL(file);
     });
   }, [insertAtCursor, onImageAdd]);
+
+  const handleCopy = useCallback(async () => {
+    if (!value) return;
+    await navigator.clipboard.writeText(value);
+    onCopied?.();
+  }, [value, onCopied]);
 
   const removeImage = useCallback((name: string) => {
     const regex = new RegExp(`!\\[${name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\]`, 'g');
@@ -284,6 +291,15 @@ export const Editor = ({ value, onChange, fontSize, images, onImageAdd, onImageR
       }}
       onDrop={handleDrop}
     >
+      <button
+        onClick={handleCopy}
+        className="absolute top-2 right-2 z-10 p-2.5 rounded-lg text-stone-300 dark:text-zinc-600 hover:text-stone-500 dark:hover:text-zinc-300 hover:bg-stone-100 dark:hover:bg-white/5 transition-all"
+        title="Copy markdown"
+      >
+        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+        </svg>
+      </button>
       {isDragging && (
         <div className="absolute inset-0 z-20 flex items-center justify-center bg-blue-500/5 dark:bg-blue-400/5 backdrop-blur-sm border-2 border-dashed border-blue-400/40 dark:border-blue-400/30 rounded-lg m-2 pointer-events-none">
           <div className="flex flex-col items-center gap-2 text-blue-400/70 dark:text-blue-400/60">

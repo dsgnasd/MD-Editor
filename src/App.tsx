@@ -33,6 +33,7 @@ export const App = () => {
   const [helpOpen, setHelpOpen] = useState(false);
   const [minimalMode, setMinimalMode] = useState(false);
   const [showMinimalHint, setShowMinimalHint] = useState(false);
+  const [copied, setCopied] = useState(false);
   const isDragging = useRef(false);
 
   const images = activeNote ? new Map(activeNote.images) : new Map<string, string>();
@@ -123,6 +124,12 @@ export const App = () => {
       clearTimeout(timeout);
     };
   }, [minimalMode]);
+
+  useEffect(() => {
+    if (!copied) return;
+    const timeout = setTimeout(() => setCopied(false), 2000);
+    return () => clearTimeout(timeout);
+  }, [copied]);
 
   useEffect(() => {
     const check = () => setIsMobile(window.innerWidth < 640);
@@ -312,13 +319,13 @@ export const App = () => {
             </div>
 
             <div className="h-full bg-stone-50 dark:bg-[#0e0e10] overflow-y-auto px-4 sm:px-0" style={{ width: isMobile ? (activePanel === 'editor' ? '100%' : '0%') : `${100 - split}%`, display: isMobile && activePanel !== 'editor' ? 'none' : undefined }}>
-              <Editor value={activeNote?.content || ''} onChange={handleChange} fontSize={fontSize - 1} images={images} onImageAdd={handleImageAdd} onImageRemove={handleImageRemove} />
+              <Editor value={activeNote?.content || ''} onChange={handleChange} fontSize={fontSize - 1} images={images} onImageAdd={handleImageAdd} onImageRemove={handleImageRemove} onCopied={() => setCopied(true)} />
             </div>
           </>
         ) : (
           <>
             <div className="h-full bg-stone-50 dark:bg-[#0e0e10] overflow-y-auto px-4 sm:px-0" style={{ width: isMobile ? (activePanel === 'editor' ? '100%' : '0%') : `${split}%`, display: isMobile && activePanel !== 'editor' ? 'none' : undefined }}>
-              <Editor value={activeNote?.content || ''} onChange={handleChange} fontSize={fontSize - 1} images={images} onImageAdd={handleImageAdd} onImageRemove={handleImageRemove} />
+              <Editor value={activeNote?.content || ''} onChange={handleChange} fontSize={fontSize - 1} images={images} onImageAdd={handleImageAdd} onImageRemove={handleImageRemove} onCopied={() => setCopied(true)} />
             </div>
 
             <div
@@ -347,6 +354,12 @@ export const App = () => {
       {minimalMode && showMinimalHint && (
         <div className="fixed bottom-6 left-1/2 -translate-x-1/2 px-4 py-2.5 bg-stone-900/90 dark:bg-zinc-100/90 text-white dark:text-zinc-900 text-sm font-medium rounded-full shadow-xl backdrop-blur-sm border border-white/10 dark:border-zinc-200/20">
           Press <span className="opacity-70">Esc</span> to exit
+        </div>
+      )}
+
+      {copied && !minimalMode && (
+        <div className="fixed bottom-16 left-1/2 -translate-x-1/2 px-4 py-2.5 bg-stone-900/90 dark:bg-zinc-100/90 text-white dark:text-zinc-900 text-sm font-medium rounded-full shadow-xl backdrop-blur-sm border border-white/10 dark:border-zinc-200/20">
+          Copied to clipboard
         </div>
       )}
 

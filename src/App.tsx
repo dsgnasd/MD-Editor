@@ -19,7 +19,15 @@ import { MAX_FILENAME_LENGTH, MINIMAL_HINT } from './utils/config';
 
 export const App = () => {
   const { activeNote, activeNoteId, createNewNote, updateNoteContent } = useNotes();
-  const { split, panelsSwapped, toggleSwap, activePanel, setActivePanel, onDividerMouseDown, dividerLeft } = useSplitPane();
+  const {
+    split,
+    panelsSwapped,
+    toggleSwap,
+    activePanel,
+    setActivePanel,
+    onDividerMouseDown,
+    dividerLeft,
+  } = useSplitPane();
   const { fontSize, minimalMode, setMinimalMode } = usePreferencesContext();
   const isMobile = useIsMobile();
   const { showToast, toastVisible, toastFading, toastMessage } = useToast();
@@ -53,7 +61,11 @@ export const App = () => {
 
   const download = useCallback(() => {
     if (!activeNote) return;
-    const firstLine = activeNote.content.split('\n')[0]?.replace(/^[#\s]+/, '').trim() || 'note';
+    const firstLine =
+      activeNote.content
+        .split('\n')[0]
+        ?.replace(/^[#\s]+/, '')
+        .trim() || 'note';
     const safeName = firstLine.replace(/[<>:"/\\|?*]/g, '').slice(0, MAX_FILENAME_LENGTH) || 'note';
     const blob = new Blob([activeNote.content], { type: 'text/markdown' });
     const url = URL.createObjectURL(blob);
@@ -106,11 +118,13 @@ export const App = () => {
 
       <Toast visible={toastVisible} fading={toastFading} message={toastMessage} />
 
-      <Footer
-        wordCount={wordCount}
-        onSwapPanels={toggleSwap}
-        onHelpOpen={() => setHelpOpen(true)}
-      />
+      {!minimalMode && (
+        <Footer
+          wordCount={wordCount}
+          onSwapPanels={toggleSwap}
+          onHelpOpen={() => setHelpOpen(true)}
+        />
+      )}
 
       <HelpDialog open={helpOpen} onClose={() => setHelpOpen(false)} />
 

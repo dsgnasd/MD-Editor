@@ -32,7 +32,9 @@ export const App = () => {
   const [helpOpen, setHelpOpen] = useState(false);
   const [minimalMode, setMinimalMode] = useState(false);
   const [showMinimalHint, setShowMinimalHint] = useState(false);
+  const [minimalHintVisible, setMinimalHintVisible] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [copiedVisible, setCopiedVisible] = useState(false);
   const isDragging = useRef(false);
 
   const images = activeNote ? new Map(activeNote.images) : new Map<string, string>();
@@ -113,21 +115,32 @@ export const App = () => {
   useEffect(() => {
     if (!minimalMode) return;
     setShowMinimalHint(true);
-    const timeout = setTimeout(() => setShowMinimalHint(false), 5000);
+    setMinimalHintVisible(true);
+    const fadeOutTimeout = setTimeout(() => setMinimalHintVisible(false), 4000);
+    const removeTimeout = setTimeout(() => setShowMinimalHint(false), 4500);
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setMinimalMode(false);
+      if (e.key === 'Escape') {
+        setMinimalHintVisible(false);
+        setTimeout(() => setShowMinimalHint(false), 300);
+      }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
-      clearTimeout(timeout);
+      clearTimeout(fadeOutTimeout);
+      clearTimeout(removeTimeout);
     };
   }, [minimalMode]);
 
   useEffect(() => {
     if (!copied) return;
-    const timeout = setTimeout(() => setCopied(false), 2000);
-    return () => clearTimeout(timeout);
+    setCopiedVisible(true);
+    const fadeOutTimeout = setTimeout(() => setCopiedVisible(false), 1500);
+    const removeTimeout = setTimeout(() => setCopied(false), 2000);
+    return () => {
+      clearTimeout(fadeOutTimeout);
+      clearTimeout(removeTimeout);
+    };
   }, [copied]);
 
   useEffect(() => {
@@ -353,13 +366,13 @@ export const App = () => {
       </main>
 
       {minimalMode && showMinimalHint && (
-        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 px-4 py-2.5 bg-stone-900/90 dark:bg-zinc-100/90 text-white dark:text-zinc-900 text-sm font-medium rounded-full shadow-xl backdrop-blur-sm border border-white/10 dark:border-zinc-200/20">
+        <div className={`fixed bottom-6 left-1/2 -translate-x-1/2 px-4 py-2.5 bg-stone-900/90 dark:bg-zinc-100/90 text-white dark:text-zinc-900 text-sm font-medium rounded-full shadow-xl backdrop-blur-sm border border-white/10 dark:border-zinc-200/20 transition-all duration-300 ${minimalHintVisible ? 'opacity-100 translate-y-0 animate-fade-in' : 'opacity-0 translate-y-1'}`}>
           Press <span className="opacity-70">Esc</span> to exit
         </div>
       )}
 
-      {copied && !minimalMode && (
-        <div className="fixed bottom-16 left-1/2 -translate-x-1/2 px-4 py-2.5 bg-stone-900/90 dark:bg-zinc-100/90 text-white dark:text-zinc-900 text-sm font-medium rounded-full shadow-xl backdrop-blur-sm border border-white/10 dark:border-zinc-200/20">
+      {copied && (
+        <div className={`fixed bottom-16 left-1/2 -translate-x-1/2 px-4 py-2.5 bg-stone-900/90 dark:bg-zinc-100/90 text-white dark:text-zinc-900 text-sm font-medium rounded-full shadow-xl backdrop-blur-sm border border-white/10 dark:border-zinc-200/20 transition-all duration-300 ${copiedVisible ? 'opacity-100 translate-y-0 animate-fade-in' : 'opacity-0 translate-y-1'}`}>
           Copied to clipboard
         </div>
       )}

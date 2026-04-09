@@ -19,12 +19,17 @@ export default {
         'soft-dark': '0 8px 40px rgba(0,0,0,0.4)',
       },
       animation: {
-        'fade-in': 'fadeIn 0.2s ease-out',
+        'fade-in': 'fadeIn 0.2s ease-out forwards',
+        'fade-out': 'fadeOut 0.3s ease-out forwards',
       },
       keyframes: {
         fadeIn: {
           '0%': { opacity: '0', transform: 'translateY(-4px)' },
           '100%': { opacity: '1', transform: 'translateY(0)' },
+        },
+        fadeOut: {
+          '0%': { opacity: '1', transform: 'translateY(0)' },
+          '100%': { opacity: '0', transform: 'translateY(4px)' },
         },
       },
       fontFamily: {

@@ -1,38 +1,28 @@
-import { FC } from 'react';
+import { memo, useState } from 'react';
 import { fonts } from '../utils/constants';
 import { ThemeToggle } from './ThemeToggle';
+import { usePreferencesContext } from '../context/PreferencesContext';
+import { useEscapeKey } from '../hooks/useEscapeKey';
+import { FONT_SIZE } from '../utils/config';
 
 type MobileMenuProps = {
   open: boolean;
   onClose: () => void;
-  fontSize: number;
-  setFontSize: (size: number) => void;
-  font: string;
-  setFont: (font: string) => void;
-  fontMenuOpen: boolean;
-  setFontMenuOpen: (open: boolean) => void;
   onNewNote: () => void;
   onDownload: () => void;
   onHelpOpen: () => void;
 };
 
-export const MobileMenu: FC<MobileMenuProps> = ({
-  open,
-  onClose,
-  fontSize,
-  setFontSize,
-  font,
-  setFont,
-  fontMenuOpen,
-  setFontMenuOpen,
-  onNewNote,
-  onDownload,
-  onHelpOpen,
-}) => {
+export const MobileMenu = memo(({ open, onClose, onNewNote, onDownload, onHelpOpen }: MobileMenuProps) => {
+  const { fontSize, setFontSize, font, setFont } = usePreferencesContext();
+  const [fontMenuOpen, setFontMenuOpen] = useState(false);
+
+  useEscapeKey(onClose, open);
+
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-40 sm:hidden">
+    <div role="dialog" aria-modal="true" className="fixed inset-0 z-40 sm:hidden">
       <div className="absolute inset-0 bg-black/20 dark:bg-black/40" onClick={onClose} />
       <div className="absolute right-0 top-0 bottom-0 w-80 bg-white dark:bg-dark-tertiary shadow-2xl flex flex-col pt-20 pb-6 px-4 overflow-y-auto">
         <div className="space-y-1">
@@ -60,25 +50,27 @@ export const MobileMenu: FC<MobileMenuProps> = ({
 
           <div className="flex items-center justify-between px-4 py-4 rounded-xl hover:bg-stone-100 dark:hover:bg-white/5 transition-all h-14">
             <span className="text-sm text-stone-700 dark:text-zinc-200">Theme</span>
-            <div className="flex items-center gap-1">
-              <ThemeToggle />
-            </div>
+            <ThemeToggle />
           </div>
 
           <div className="flex items-center justify-between px-4 py-4 rounded-xl hover:bg-stone-100 dark:hover:bg-white/5 transition-all h-14">
             <span className="text-sm text-stone-700 dark:text-zinc-200">Font Size</span>
             <div className="flex items-center gap-1">
               <button
-                onClick={() => setFontSize(Math.max(14, fontSize - 1))}
-                disabled={fontSize <= 14}
+                onClick={() => setFontSize(fontSize - 1)}
+                disabled={fontSize <= FONT_SIZE.min}
+                aria-label="Decrease font size"
                 className="w-8 h-8 rounded-lg flex items-center justify-center text-base text-stone-600 dark:text-zinc-300 hover:bg-stone-100 dark:hover:bg-white/5 disabled:opacity-30 disabled:cursor-not-allowed"
               >
                 −
               </button>
-              <span className="w-6 text-center text-sm font-medium text-stone-800 dark:text-zinc-100">{fontSize}</span>
+              <span className="w-6 text-center text-sm font-medium text-stone-800 dark:text-zinc-100">
+                {fontSize}
+              </span>
               <button
-                onClick={() => setFontSize(Math.min(18, fontSize + 1))}
-                disabled={fontSize >= 18}
+                onClick={() => setFontSize(fontSize + 1)}
+                disabled={fontSize >= FONT_SIZE.max}
+                aria-label="Increase font size"
                 className="w-8 h-8 rounded-lg flex items-center justify-center text-base text-stone-600 dark:text-zinc-300 hover:bg-stone-100 dark:hover:bg-white/5 disabled:opacity-30 disabled:cursor-not-allowed"
               >
                 +
@@ -92,8 +84,16 @@ export const MobileMenu: FC<MobileMenuProps> = ({
           >
             <span className="text-sm text-stone-700 dark:text-zinc-200">Font</span>
             <div className="flex items-center gap-2">
-              <span className="text-sm text-stone-600 dark:text-zinc-400">{fonts.find(f => f.id === font)?.label}</span>
-              <svg className={`w-4 h-4 text-stone-400 transition-transform ${fontMenuOpen ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <span className="text-sm text-stone-600 dark:text-zinc-400">
+                {fonts.find((f) => f.id === font)?.label}
+              </span>
+              <svg
+                className={`w-4 h-4 text-stone-400 transition-transform ${fontMenuOpen ? 'rotate-180' : ''}`}
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2}
+              >
                 <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
               </svg>
             </div>
@@ -101,14 +101,21 @@ export const MobileMenu: FC<MobileMenuProps> = ({
 
           {fontMenuOpen && (
             <div className="px-2 pb-2 space-y-1">
-              {fonts.map(f => (
+              {fonts.map((f) => (
                 <button
                   key={f.id}
                   onClick={() => setFont(f.id)}
                   className="w-full flex items-center gap-3 px-3 py-3 rounded-xl text-sm hover:bg-stone-100 dark:hover:bg-white/5 transition-all"
                 >
-                  <span className="w-10 h-10 rounded-lg bg-stone-100 dark:bg-white/5 flex items-center justify-center text-xs font-semibold text-stone-700 dark:text-zinc-300" style={{ fontFamily: f.family }}>Aa</span>
-                  <span className="text-stone-700 dark:text-zinc-200" style={{ fontFamily: f.family }}>{f.label}</span>
+                  <span
+                    className="w-10 h-10 rounded-lg bg-stone-100 dark:bg-white/5 flex items-center justify-center text-xs font-semibold text-stone-700 dark:text-zinc-300"
+                    style={{ fontFamily: f.family }}
+                  >
+                    Aa
+                  </span>
+                  <span className="text-stone-700 dark:text-zinc-200" style={{ fontFamily: f.family }}>
+                    {f.label}
+                  </span>
                 </button>
               ))}
             </div>
@@ -124,10 +131,13 @@ export const MobileMenu: FC<MobileMenuProps> = ({
           </button>
 
           <div className="mt-4 pt-4 border-t border-stone-200 dark:border-white/10">
-            <p className="text-sm text-stone-500 dark:text-zinc-400 text-center">Simple Markdown editor for fast writing and clean preview</p>
+            <p className="text-sm text-stone-500 dark:text-zinc-400 text-center">
+              Simple Markdown editor for fast writing and clean preview
+            </p>
           </div>
         </div>
       </div>
     </div>
   );
-};
+});
+MobileMenu.displayName = 'MobileMenu';

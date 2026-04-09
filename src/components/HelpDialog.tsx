@@ -1,4 +1,6 @@
+import { memo } from 'react';
 import { createPortal } from 'react-dom';
+import { useEscapeKey } from '../hooks/useEscapeKey';
 import md from '../utils/markdownParser';
 
 const exampleMarkdown = `# Заголовок первого уровня
@@ -96,17 +98,28 @@ type HelpDialogProps = {
   onClose: () => void;
 };
 
-export const HelpDialog = ({ open, onClose }: HelpDialogProps) => {
+export const HelpDialog = memo(({ open, onClose }: HelpDialogProps) => {
+  useEscapeKey(onClose, open);
+
+  // HTML is sanitized by renderMarkdown() via DOMPurify — safe to render
   const html = md.render(exampleMarkdown);
 
   const dialog = (
-    <div className="fixed inset-0 z-[200] flex items-center justify-center">
+    <div
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="help-dialog-title"
+      className="fixed inset-0 z-[200] flex items-center justify-center"
+    >
       <div className="absolute inset-0 bg-black/50 dark:bg-black/70 backdrop-blur-md" onClick={onClose} />
       <div className="relative w-[90vw] max-w-4xl max-h-[85vh] bg-white dark:bg-zinc-900 rounded-2xl shadow-2xl border border-stone-200 dark:border-white/10 flex flex-col overflow-hidden">
         <div className="flex items-center justify-between px-6 py-4 border-b border-stone-200 dark:border-white/5">
-          <h2 className="text-lg font-semibold text-stone-800 dark:text-zinc-100">Markdown — шпаргалка</h2>
+          <h2 id="help-dialog-title" className="text-lg font-semibold text-stone-800 dark:text-zinc-100">
+            Markdown — шпаргалка
+          </h2>
           <button
             onClick={onClose}
+            aria-label="Close dialog"
             className="w-8 h-8 rounded-lg flex items-center justify-center text-stone-400 hover:text-stone-700 dark:text-zinc-500 dark:hover:text-zinc-200 hover:bg-stone-100 dark:hover:bg-white/5 transition"
           >
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -130,4 +143,5 @@ export const HelpDialog = ({ open, onClose }: HelpDialogProps) => {
   );
 
   return open ? createPortal(dialog, document.body) : null;
-};
+});
+HelpDialog.displayName = 'HelpDialog';

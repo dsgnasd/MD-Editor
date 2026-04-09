@@ -1,17 +1,17 @@
-import { FC } from 'react';
+import { memo } from 'react';
+import { usePreferencesContext } from '../context/PreferencesContext';
 
 type FooterProps = {
   wordCount: number;
   onSwapPanels: () => void;
   onHelpOpen: () => void;
-  minimalMode: boolean;
 };
 
-export const Footer: FC<FooterProps> = ({ wordCount, onSwapPanels, onHelpOpen, minimalMode }) => {
-  const formatWords = (count: number) => {
-    if (count === 0) return '0 words';
-    return `${count} ${count === 1 ? 'word' : 'words'}`;
-  };
+const formatWords = (count: number) =>
+  count === 0 ? '0 words' : `${count} ${count === 1 ? 'word' : 'words'}`;
+
+export const Footer = memo(({ wordCount, onSwapPanels, onHelpOpen }: FooterProps) => {
+  const { minimalMode } = usePreferencesContext();
 
   if (minimalMode) return null;
 
@@ -19,8 +19,8 @@ export const Footer: FC<FooterProps> = ({ wordCount, onSwapPanels, onHelpOpen, m
     <footer className="hidden sm:flex px-4 py-1 border-t border-stone-200 dark:border-white/5 bg-white/80 dark:bg-dark-primary/80 backdrop-blur-xl items-center justify-between">
       <button
         onClick={onSwapPanels}
+        aria-label="Swap panels"
         className="flex items-center gap-1 px-2 py-1 rounded-lg text-xs text-stone-500 dark:text-zinc-400 hover:text-stone-700 dark:hover:text-zinc-200 hover:bg-stone-100 dark:hover:bg-white/5 transition-all duration-200"
-        title="Swap panels"
       >
         <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
           <path strokeLinecap="round" strokeLinejoin="round" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
@@ -40,4 +40,5 @@ export const Footer: FC<FooterProps> = ({ wordCount, onSwapPanels, onHelpOpen, m
       </div>
     </footer>
   );
-};
+});
+Footer.displayName = 'Footer';

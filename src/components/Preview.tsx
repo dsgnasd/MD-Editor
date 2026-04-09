@@ -1,3 +1,4 @@
+import { memo, useMemo } from 'react';
 import { renderMarkdown } from '../utils/markdownParser';
 
 type PreviewProps = {
@@ -5,7 +6,9 @@ type PreviewProps = {
   fontSize: number;
 };
 
-export const Preview = ({ value, fontSize }: PreviewProps) => {
+export const Preview = memo(({ value, fontSize }: PreviewProps) => {
+  const html = useMemo(() => renderMarkdown(value), [value]);
+
   if (!value.trim()) {
     return (
       <div className="flex items-center justify-center min-h-full px-4 sm:px-0 text-zinc-400 dark:text-zinc-400">
@@ -16,14 +19,14 @@ export const Preview = ({ value, fontSize }: PreviewProps) => {
     );
   }
 
-  const html = renderMarkdown(value);
-
   return (
     <div
       className="preview prose dark:prose-dark max-w-none px-4 sm:px-10 py-4 sm:py-6"
       style={{ fontSize: `${fontSize}px` }}
     >
+      {/* HTML is sanitized by renderMarkdown() via DOMPurify — safe to render */}
       <div dangerouslySetInnerHTML={{ __html: html }} />
     </div>
   );
-};
+});
+Preview.displayName = 'Preview';

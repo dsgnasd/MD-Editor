@@ -4,29 +4,12 @@ import type { Note } from '../types';
 const OPEN_NOTE_IDS_KEY = 'md-editor-open-note-ids';
 const NOTE_PREFIX = 'md-editor-note-';
 
-// One-time cleanup: strip any legacy `images` field from previously stored notes
-// so that data URLs from removed image feature don't linger in localStorage.
-(() => {
-  try {
-    for (let i = 0; i < localStorage.length; i++) {
-      const key = localStorage.key(i);
-      if (!key || !key.startsWith(NOTE_PREFIX)) continue;
-      const raw = localStorage.getItem(key);
-      if (!raw) continue;
-      const parsed = JSON.parse(raw);
-      if (parsed && typeof parsed === 'object' && 'images' in parsed) {
-        delete parsed.images;
-        localStorage.setItem(key, JSON.stringify(parsed));
-      }
-    }
-  } catch (err) {
-    console.error('Failed to migrate legacy notes:', err);
-  }
-})();
+const isValidNoteId = (id: string): boolean => /^[a-z0-9]+$/i.test(id);
 
 const getNoteIdFromUrl = (): string | null => {
   const params = new URLSearchParams(window.location.search);
-  return params.get('noteId');
+  const id = params.get('noteId');
+  return id && isValidNoteId(id) ? id : null;
 };
 
 const loadOpenNoteIds = (): string[] => {
@@ -53,11 +36,10 @@ const loadNoteContent = (noteId: string): Partial<Note> | null => {
 
 const saveNoteContent = (note: Note) => {
   try {
-    localStorage.setItem(NOTE_PREFIX + note.id, JSON.stringify({
-      content: note.content,
-      title: note.title,
-      updatedAt: note.updatedAt,
-    }));
+    localStorage.setItem(
+      NOTE_PREFIX + note.id,
+      JSON.stringify({ content: note.content, title: note.title, updatedAt: note.updatedAt }),
+    );
   } catch (err) {
     console.error('Failed to save note to localStorage:', err);
   }
@@ -69,13 +51,7 @@ const deleteNoteContent = (noteId: string) => {
 
 const createNote = (content?: string): Note => {
   const id = Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
-  return {
-    id,
-    title: 'Note',
-    content: content || '',
-    createdAt: Date.now(),
-    updatedAt: Date.now(),
-  };
+  return { id, title: 'Note', content: content || '', createdAt: Date.now(), updatedAt: Date.now() };
 };
 
 export const useNotes = () => {
@@ -96,7 +72,7 @@ export const useNotes = () => {
     return [createNote()];
   });
 
-  const activeNoteId = urlNoteId || (notes[0]?.id || '');
+  const activeNoteId = urlNoteId || notes[0]?.id || '';
 
   useEffect(() => {
     const currentId = urlNoteId || activeNoteId;
@@ -108,11 +84,10 @@ export const useNotes = () => {
   }, [urlNoteId, activeNoteId, openNoteIds]);
 
   useEffect(() => {
+    const currentId = urlNoteId || activeNoteId;
     const handleBeforeUnload = () => {
-      const currentId = urlNoteId || activeNoteId;
       if (currentId) {
-        const newOpenIds = openNoteIds.filter(id => id !== currentId);
-        saveOpenNoteIds(newOpenIds);
+        saveOpenNoteIds(openNoteIds.filter((id) => id !== currentId));
         deleteNoteContent(currentId);
       }
     };
@@ -127,47 +102,38 @@ export const useNotes = () => {
     window.open(`?noteId=${note.id}`, '_blank', 'noopener,noreferrer');
   }, []);
 
-  const deleteNote = useCallback((id: string) => {
-    setNotes((prev) => prev.filter((n) => n.id !== id));
-    const newOpenIds = openNoteIds.filter(noteId => noteId !== id);
-    setOpenNoteIds(newOpenIds);
-    saveOpenNoteIds(newOpenIds);
-    deleteNoteContent(id);
-  }, [openNoteIds]);
+  const deleteNote = useCallback(
+    (id: string) => {
+      setNotes((prev) => prev.filter((n) => n.id !== id));
+      const newOpenIds = openNoteIds.filter((noteId) => noteId !== id);
+      setOpenNoteIds(newOpenIds);
+      saveOpenNoteIds(newOpenIds);
+      deleteNoteContent(id);
+    },
+    [openNoteIds],
+  );
 
   const renameNote = useCallback((id: string, title: string) => {
     setNotes((prev) =>
       prev.map((n) => {
-        if (n.id === id) {
-          const updated = { ...n, title, updatedAt: Date.now() };
-          saveNoteContent(updated);
-          return updated;
-        }
-        return n;
-      })
+        if (n.id !== id) return n;
+        const updated = { ...n, title, updatedAt: Date.now() };
+        saveNoteContent(updated);
+        return updated;
+      }),
     );
   }, []);
 
   const updateNoteContent = useCallback((id: string, content: string) => {
     setNotes((prev) =>
       prev.map((n) => {
-        if (n.id === id) {
-          const updated = { ...n, content, updatedAt: Date.now() };
-          saveNoteContent(updated);
-          return updated;
-        }
-        return n;
-      })
+        if (n.id !== id) return n;
+        const updated = { ...n, content, updatedAt: Date.now() };
+        saveNoteContent(updated);
+        return updated;
+      }),
     );
   }, []);
 
-  return {
-    notes,
-    activeNote,
-    activeNoteId,
-    createNewNote,
-    deleteNote,
-    renameNote,
-    updateNoteContent,
-  };
+  return { notes, activeNote, activeNoteId, createNewNote, deleteNote, renameNote, updateNoteContent };
 };

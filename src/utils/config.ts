@@ -6,3 +6,15 @@ export const MINIMAL_HINT = { fadeMs: 4000, removeMs: 4500 } as const;
 export const MAX_HISTORY = 500;
 export const MAX_FILENAME_LENGTH = 50;
 export const MOBILE_BREAKPOINT = 640;
+
+export const DEFAULT_NOTE_CONTENT = `# Clean Markdown Preview
+
+Paste or drop your markdown to see a clean preview instantly.
+
+## Why use this
+- Fast
+- Simple
+- No distractions
+
+**Paste your markdown or start editing →**
+`;

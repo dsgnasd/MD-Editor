@@ -32,6 +32,9 @@ export default {
           '100%': { opacity: '0', transform: 'translateY(4px)' },
         },
       },
+      transitionDuration: {
+        '400': '400ms',
+      },
       fontFamily: {
         sans: ['var(--font-sans)', 'system-ui', 'sans-serif'],
         mono: ["'JetBrains Mono'", 'monospace'],

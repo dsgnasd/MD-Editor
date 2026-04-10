@@ -125,7 +125,7 @@ export const App = () => {
   }, [activeNote]);
 
   return (
-    <div className="flex flex-col h-screen sm:h-screen bg-stone-50 dark:bg-dark-primary transition-colors duration-300 overflow-visible max-sm:min-h-screen max-sm:h-auto">
+    <div className="flex flex-col h-dvh bg-stone-50 dark:bg-dark-primary transition-colors duration-300 overflow-hidden">
       <Header
         onNewNote={createNewNote}
         onDownload={download}
@@ -137,7 +137,7 @@ export const App = () => {
 
       {isMobile && <PanelTabs active={activePanel} onChange={setActivePanel} />}
 
-      <main className="relative flex flex-1 overflow-hidden max-sm:overflow-visible">
+      <main className="relative flex flex-1 min-h-0 overflow-hidden">
         {minimalMode ? (
           <MinimalView
             content={content}

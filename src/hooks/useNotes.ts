@@ -1,5 +1,6 @@
 import { useState, useCallback, useMemo, useEffect } from 'react';
 import type { Note } from '../types';
+import { DEFAULT_NOTE_CONTENT } from '../utils/config';
 
 const OPEN_NOTE_IDS_KEY = 'md-editor-open-note-ids';
 const NOTE_PREFIX = 'md-editor-note-';
@@ -61,7 +62,7 @@ export const useNotes = () => {
   const [notes, setNotes] = useState<Note[]>(() => {
     if (urlNoteId) {
       const saved = loadNoteContent(urlNoteId);
-      const note = createNote(saved?.content);
+      const note = createNote(saved?.content || DEFAULT_NOTE_CONTENT);
       note.id = urlNoteId;
       if (saved) {
         note.title = saved.title || 'Note';
@@ -69,7 +70,7 @@ export const useNotes = () => {
       }
       return [note];
     }
-    return [createNote()];
+    return [createNote(DEFAULT_NOTE_CONTENT)];
   });
 
   const activeNoteId = urlNoteId || notes[0]?.id || '';

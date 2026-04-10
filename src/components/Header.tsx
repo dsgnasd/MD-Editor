@@ -22,7 +22,7 @@ export const Header = memo(({ menuOpen, setMenuOpen, onNewNote, onDownload, mini
       <header className="absolute top-0 left-0 right-0 z-50 flex items-center justify-between px-4 py-2 bg-transparent">
         <div className="flex flex-col shrink-0 invisible" aria-hidden="true">
           <h1 className="text-lg font-semibold text-stone-800 dark:text-zinc-100 tracking-tight whitespace-nowrap">
-            MD Persona
+            InstantMD
           </h1>
           <span className="hidden lg:block text-xs text-stone-500 dark:text-zinc-400 mt-0.5">
             Simple Markdown editor for fast writing and clean preview
@@ -80,7 +80,7 @@ export const Header = memo(({ menuOpen, setMenuOpen, onNewNote, onDownload, mini
     <header className="sm:sticky top-0 z-50 flex items-center justify-between px-4 py-2 border-b border-stone-200 dark:border-white/5 bg-white/80 dark:bg-dark-primary/80 backdrop-blur-xl">
       <div className="flex flex-col shrink-0">
         <h1 className="text-lg font-semibold text-stone-800 dark:text-zinc-100 tracking-tight whitespace-nowrap">
-          MD Persona
+          InstantMD
         </h1>
         <span className="hidden lg:block text-xs text-stone-500 dark:text-zinc-400 mt-0.5">
           Simple Markdown editor for fast writing and clean preview

@@ -56,7 +56,7 @@ export const SplitView = memo(
 
     const editorPane = (
       <div
-        className="h-full max-sm:h-auto bg-stone-50 dark:bg-dark-primary overflow-y-auto max-sm:overflow-visible px-4 sm:px-0"
+        className="h-full bg-stone-50 dark:bg-dark-primary overflow-y-auto"
         style={{ width: editorWidth, display: editorHidden }}
       >
         <Editor value={content} onChange={onChange} onCopied={onCopied} />
@@ -65,7 +65,7 @@ export const SplitView = memo(
 
     const previewPane = (
       <div
-        className="preview-scroll-container h-full max-sm:h-auto bg-white dark:bg-dark-secondary overflow-y-auto max-sm:overflow-visible px-4 sm:px-0"
+        className="preview-scroll-container h-full bg-white dark:bg-dark-secondary overflow-y-auto"
         style={{ width: previewWidth, display: previewHidden }}
       >
         <div className="h-full w-full max-w-[900px] mx-auto">

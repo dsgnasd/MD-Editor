@@ -1,13 +1,11 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
-import { SPLIT } from '../utils/config';
+import { TOC } from '../utils/config';
 
-export const useSplitPane = () => {
-  const [split, setSplit] = useState<number>(SPLIT.default);
-  const [panelsSwapped, setPanelsSwapped] = useState(false);
-  const [activePanel, setActivePanel] = useState<'editor' | 'preview'>('editor');
+export const useTocPane = () => {
+  const [tocWidth, setTocWidth] = useState<number>(TOC.default);
   const isDragging = useRef(false);
 
-  const onDividerMouseDown = useCallback(() => {
+  const onTocResizeStart = useCallback(() => {
     isDragging.current = true;
     document.body.style.cursor = 'col-resize';
     document.body.style.userSelect = 'none';
@@ -16,11 +14,11 @@ export const useSplitPane = () => {
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
       if (!isDragging.current) return;
-      const main = document.querySelector('.split-panels-container') || document.querySelector('main');
+      const main = document.querySelector('main');
       if (!main) return;
       const rect = main.getBoundingClientRect();
       const pct = ((e.clientX - rect.left) / rect.width) * 100;
-      setSplit(Math.min(Math.max(pct, SPLIT.min), SPLIT.max));
+      setTocWidth(Math.min(Math.max(pct, TOC.min), TOC.max));
     };
 
     const handleMouseUp = () => {
@@ -37,8 +35,5 @@ export const useSplitPane = () => {
     };
   }, []);
 
-  const toggleSwap = useCallback(() => setPanelsSwapped((p) => !p), []);
-  const dividerLeft = `calc(${split}% - 22px)`;
-
-  return { split, panelsSwapped, toggleSwap, activePanel, setActivePanel, onDividerMouseDown, dividerLeft };
+  return { tocWidth, onTocResizeStart };
 };

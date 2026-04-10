@@ -9,9 +9,11 @@ type HeaderProps = {
   setMenuOpen: (open: boolean) => void;
   onNewNote: () => void;
   onDownload: () => void;
+  minimalEditing: boolean;
+  onToggleMinimalEditing: () => void;
 };
 
-export const Header = memo(({ menuOpen, setMenuOpen, onNewNote, onDownload }: HeaderProps) => {
+export const Header = memo(({ menuOpen, setMenuOpen, onNewNote, onDownload, minimalEditing, onToggleMinimalEditing }: HeaderProps) => {
   const { fontSize, setFontSize, font, setFont, minimalMode, setMinimalMode } =
     usePreferencesContext();
 
@@ -28,6 +30,27 @@ export const Header = memo(({ menuOpen, setMenuOpen, onNewNote, onDownload }: He
         </div>
         <div className="flex items-center gap-1">
           <div className="invisible w-10 h-10" aria-hidden="true" />
+          <button
+            onClick={onToggleMinimalEditing}
+            aria-label={minimalEditing ? 'Switch to preview' : 'Switch to editor'}
+            className={`hidden sm:flex items-center gap-1.5 p-2 rounded-xl text-sm transition-opacity duration-200 text-stone-600 dark:text-zinc-300 hover:bg-stone-100/60 dark:hover:bg-white/5 ${
+              minimalEditing ? 'opacity-80' : 'opacity-25 hover:opacity-80'
+            }`}
+          >
+            <svg
+              className="w-4 h-4"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={2}
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+              />
+            </svg>
+          </button>
           <button
             onClick={() => setMinimalMode(false)}
             aria-label="Exit minimal mode"
@@ -54,7 +77,7 @@ export const Header = memo(({ menuOpen, setMenuOpen, onNewNote, onDownload }: He
   }
 
   return (
-    <header className="sticky top-0 z-50 flex items-center justify-between px-4 py-2 border-b border-stone-200 dark:border-white/5 bg-white/80 dark:bg-dark-primary/80 backdrop-blur-xl">
+    <header className="sm:sticky top-0 z-50 flex items-center justify-between px-4 py-2 border-b border-stone-200 dark:border-white/5 bg-white/80 dark:bg-dark-primary/80 backdrop-blur-xl">
       <div className="flex flex-col shrink-0">
         <h1 className="text-lg font-semibold text-stone-800 dark:text-zinc-100 tracking-tight whitespace-nowrap">
           MD Persona

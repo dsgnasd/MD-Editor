@@ -13,6 +13,11 @@ export const usePreferences = () => {
 
   const [font, setFontState] = useState(() => localStorage.getItem(fontKey) || 'inter');
   const [minimalMode, setMinimalMode] = useState(false);
+  const [tocVisible, setTocVisibleState] = useState(
+    () => localStorage.getItem('md-editor-toc-visible') === 'true',
+  );
+
+  const setTocVisible = useCallback((v: boolean) => setTocVisibleState(v), []);
 
   const setFontSize = useCallback((size: number) => {
     setFontSizeState(Math.min(Math.max(size, FONT_SIZE.min), FONT_SIZE.max));
@@ -25,6 +30,10 @@ export const usePreferences = () => {
   }, [fontSize]);
 
   useEffect(() => {
+    document.documentElement.style.fontSize = `${fontSize}px`;
+  }, [fontSize]);
+
+  useEffect(() => {
     const fontObj = fonts.find((f) => f.id === font);
     if (fontObj) {
       document.body.style.fontFamily = fontObj.family;
@@ -32,5 +41,9 @@ export const usePreferences = () => {
     }
   }, [font]);
 
-  return { fontSize, setFontSize, font, setFont, minimalMode, setMinimalMode };
+  useEffect(() => {
+    localStorage.setItem('md-editor-toc-visible', String(tocVisible));
+  }, [tocVisible]);
+
+  return { fontSize, setFontSize, font, setFont, minimalMode, setMinimalMode, tocVisible, setTocVisible };
 };

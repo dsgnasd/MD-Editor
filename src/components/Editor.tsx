@@ -5,11 +5,10 @@ import { useEditorKeyboard } from '../hooks/useEditorKeyboard';
 type EditorProps = {
   value: string;
   onChange: (val: string) => void;
-  fontSize: number;
   onCopied?: () => void;
 };
 
-export const Editor = memo(({ value, onChange, fontSize, onCopied }: EditorProps) => {
+export const Editor = memo(({ value, onChange, onCopied }: EditorProps) => {
   const taRef = useRef<HTMLTextAreaElement>(null);
   const { pushHistory, undo, redo } = useUndoHistory(value, onChange);
   useEditorKeyboard(taRef, value, onChange, pushHistory, undo, redo);
@@ -47,7 +46,6 @@ export const Editor = memo(({ value, onChange, fontSize, onCopied }: EditorProps
         value={value}
         onChange={(e) => onChange(e.target.value)}
         className="w-full min-h-full px-4 sm:px-10 py-4 sm:py-6 font-mono leading-relaxed text-stone-700 dark:text-zinc-300 bg-transparent border-none resize-none outline-none placeholder:text-stone-400 dark:placeholder:text-zinc-500 selection:bg-blue-200 dark:selection:bg-blue-500/30"
-        style={{ fontSize: `${fontSize}px` }}
         placeholder="Write your markdown here..."
         spellCheck={false}
       />

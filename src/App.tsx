@@ -1,6 +1,7 @@
 import { useState, useCallback, useMemo } from 'react';
 import { useNotes } from './hooks/useNotes';
 import { useSplitPane } from './hooks/useSplitPane';
+import { useTocPane } from './hooks/useTocPane';
 import { useIsMobile } from './hooks/useIsMobile';
 import { useAutoHideToast } from './hooks/useAutoHideToast';
 import { useEscapeKey } from './hooks/useEscapeKey';
@@ -28,11 +29,14 @@ export const App = () => {
     onDividerMouseDown,
     dividerLeft,
   } = useSplitPane();
-  const { fontSize, minimalMode, setMinimalMode } = usePreferencesContext();
+  const { tocWidth, onTocResizeStart } = useTocPane();
+  const { minimalMode, setMinimalMode, tocVisible } = usePreferencesContext();
   const isMobile = useIsMobile();
   const { showToast, toastVisible, toastFading, toastMessage } = useToast();
   const [helpOpen, setHelpOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [activeHeadingId, setActiveHeadingId] = useState<string | null>(null);
+  const [minimalEditing, setMinimalEditing] = useState(false);
 
   const { rendered: hintRendered, visible: hintVisible } = useAutoHideToast(
     minimalMode,
@@ -40,7 +44,10 @@ export const App = () => {
     MINIMAL_HINT.removeMs,
   );
 
-  const exitMinimalMode = useCallback(() => setMinimalMode(false), [setMinimalMode]);
+  const exitMinimalMode = useCallback(() => {
+    setMinimalMode(false);
+    setMinimalEditing(false);
+  }, [setMinimalMode]);
   useEscapeKey(exitMinimalMode, minimalMode);
   useBodyScrollLock(menuOpen);
 
@@ -57,6 +64,47 @@ export const App = () => {
       updateNoteContent(activeNoteId, val);
     },
     [activeNoteId, updateNoteContent],
+  );
+
+  const handleHeadingClick = useCallback(
+    (id: string) => {
+      setActiveHeadingId(id);
+
+      // Scroll Preview to heading
+      const previewEl = document.querySelector('.preview-scroll-container');
+      if (previewEl) {
+        const heading = previewEl.querySelector(`[id="${CSS.escape(id)}"]`);
+        if (heading) {
+          heading.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }
+
+      // Scroll Editor to the corresponding line
+      const textarea = document.querySelector('textarea');
+      if (textarea && content) {
+        const lines = content.split('\n');
+        let targetLine = -1;
+        for (let i = 0; i < lines.length; i++) {
+          const match = lines[i].match(/^(#{1,6})\s+(.+)$/);
+          if (match) {
+            const headingId = match[2]
+              .trim()
+              .toLowerCase()
+              .replace(/[^\wа-яё]+/g, '-')
+              .replace(/-+$/, '');
+            if (headingId === id) {
+              targetLine = i;
+              break;
+            }
+          }
+        }
+        if (targetLine >= 0) {
+          const lineHeight = parseFloat(getComputedStyle(textarea).lineHeight) || 24;
+          textarea.scrollTop = targetLine * lineHeight;
+        }
+      }
+    },
+    [content],
   );
 
   const download = useCallback(() => {
@@ -77,19 +125,26 @@ export const App = () => {
   }, [activeNote]);
 
   return (
-    <div className="flex flex-col h-screen bg-stone-50 dark:bg-dark-primary transition-colors duration-300 overflow-visible">
+    <div className="flex flex-col h-screen sm:h-screen bg-stone-50 dark:bg-dark-primary transition-colors duration-300 overflow-visible max-sm:min-h-screen max-sm:h-auto">
       <Header
         onNewNote={createNewNote}
         onDownload={download}
         menuOpen={menuOpen}
         setMenuOpen={setMenuOpen}
+        minimalEditing={minimalEditing}
+        onToggleMinimalEditing={() => setMinimalEditing((v) => !v)}
       />
 
       {isMobile && <PanelTabs active={activePanel} onChange={setActivePanel} />}
 
-      <main className="relative flex flex-1 overflow-hidden">
+      <main className="relative flex flex-1 overflow-hidden max-sm:overflow-visible">
         {minimalMode ? (
-          <MinimalView content={content} fontSize={fontSize} />
+          <MinimalView
+            content={content}
+            editing={minimalEditing}
+            onChange={handleChange}
+            onCopied={() => showToast('Copied to clipboard')}
+          />
         ) : (
           <SplitView
             swapped={panelsSwapped}
@@ -99,9 +154,13 @@ export const App = () => {
             isMobile={isMobile}
             activePanel={activePanel}
             content={content}
-            fontSize={fontSize}
             onChange={handleChange}
             onCopied={() => showToast('Copied to clipboard')}
+            tocVisible={tocVisible}
+            tocWidth={tocWidth}
+            onTocResizeStart={onTocResizeStart}
+            onHeadingClick={handleHeadingClick}
+            activeHeadingId={activeHeadingId}
           />
         )}
       </main>

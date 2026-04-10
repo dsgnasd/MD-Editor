@@ -3,10 +3,9 @@ import { renderMarkdown } from '../utils/markdownParser';
 
 type PreviewProps = {
   value: string;
-  fontSize: number;
 };
 
-export const Preview = memo(({ value, fontSize }: PreviewProps) => {
+export const Preview = memo(({ value }: PreviewProps) => {
   const html = useMemo(() => renderMarkdown(value), [value]);
 
   if (!value.trim()) {
@@ -22,7 +21,6 @@ export const Preview = memo(({ value, fontSize }: PreviewProps) => {
   return (
     <div
       className="preview prose dark:prose-dark max-w-none px-4 sm:px-10 py-4 sm:py-6"
-      style={{ fontSize: `${fontSize}px` }}
     >
       {/* HTML is sanitized by renderMarkdown() via DOMPurify — safe to render */}
       <div dangerouslySetInnerHTML={{ __html: html }} />

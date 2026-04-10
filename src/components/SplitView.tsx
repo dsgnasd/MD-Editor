@@ -2,6 +2,7 @@ import { memo } from 'react';
 import { Editor } from './Editor';
 import { Preview } from './Preview';
 import { Divider } from './Divider';
+import { TableOfContents } from './TableOfContents';
 
 type SplitViewProps = {
   swapped: boolean;
@@ -11,9 +12,13 @@ type SplitViewProps = {
   isMobile: boolean;
   activePanel: 'editor' | 'preview';
   content: string;
-  fontSize: number;
   onChange: (val: string) => void;
   onCopied: () => void;
+  tocVisible: boolean;
+  tocWidth: number;
+  onTocResizeStart: () => void;
+  onHeadingClick: (id: string) => void;
+  activeHeadingId: string | null;
 };
 
 export const SplitView = memo(
@@ -25,15 +30,20 @@ export const SplitView = memo(
     isMobile,
     activePanel,
     content,
-    fontSize,
     onChange,
     onCopied,
+    tocVisible,
+    tocWidth,
+    onTocResizeStart,
+    onHeadingClick,
+    activeHeadingId,
   }: SplitViewProps) => {
+    const showToc = tocVisible && !isMobile;
+    const tocWidthStr = showToc ? `${tocWidth}%` : '0%';
+
     const leftWidth = `${split}%`;
     const rightWidth = `${100 - split}%`;
 
-    // When swapped: Preview is on the left (leftWidth), Editor on the right (rightWidth)
-    // When not swapped: Editor is on the left (leftWidth), Preview on the right (rightWidth)
     const editorWidth = isMobile
       ? activePanel === 'editor' ? '100%' : '0%'
       : swapped ? rightWidth : leftWidth;
@@ -46,20 +56,20 @@ export const SplitView = memo(
 
     const editorPane = (
       <div
-        className="h-full bg-stone-50 dark:bg-dark-primary overflow-y-auto px-4 sm:px-0"
+        className="h-full max-sm:h-auto bg-stone-50 dark:bg-dark-primary overflow-y-auto max-sm:overflow-visible px-4 sm:px-0"
         style={{ width: editorWidth, display: editorHidden }}
       >
-        <Editor value={content} onChange={onChange} fontSize={fontSize - 1} onCopied={onCopied} />
+        <Editor value={content} onChange={onChange} onCopied={onCopied} />
       </div>
     );
 
     const previewPane = (
       <div
-        className="h-full bg-white dark:bg-dark-secondary overflow-y-auto px-4 sm:px-0"
+        className="preview-scroll-container h-full max-sm:h-auto bg-white dark:bg-dark-secondary overflow-y-auto max-sm:overflow-visible px-4 sm:px-0"
         style={{ width: previewWidth, display: previewHidden }}
       >
         <div className="h-full w-full max-w-[900px] mx-auto">
-          <Preview value={content} fontSize={fontSize} />
+          <Preview value={content} />
         </div>
       </div>
     );
@@ -68,10 +78,26 @@ export const SplitView = memo(
       <Divider left={dividerLeft} onMouseDown={onDividerMouseDown} />
     );
 
-    return swapped ? (
-      <>{previewPane}{divider}{editorPane}</>
-    ) : (
-      <>{editorPane}{divider}{previewPane}</>
+    return (
+      <>
+        {showToc && (
+          <div style={{ width: tocWidthStr }} className="shrink-0 h-full">
+            <TableOfContents
+              content={content}
+              onHeadingClick={onHeadingClick}
+              activeId={activeHeadingId}
+              onResizeStart={onTocResizeStart}
+            />
+          </div>
+        )}
+        <div className="split-panels-container relative flex flex-1 h-full min-w-0">
+          {swapped ? (
+            <>{previewPane}{divider}{editorPane}</>
+          ) : (
+            <>{editorPane}{divider}{previewPane}</>
+          )}
+        </div>
+      </>
     );
   },
 );

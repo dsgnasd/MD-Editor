@@ -6,9 +6,10 @@ type EditorProps = {
   value: string;
   onChange: (val: string) => void;
   onCopied?: () => void;
+  hideCopy?: boolean;
 };
 
-export const Editor = memo(({ value, onChange, onCopied }: EditorProps) => {
+export const Editor = memo(({ value, onChange, onCopied, hideCopy }: EditorProps) => {
   const taRef = useRef<HTMLTextAreaElement>(null);
   const { pushHistory, undo, redo } = useUndoHistory(value, onChange);
   useEditorKeyboard(taRef, value, onChange, pushHistory, undo, redo);
@@ -30,7 +31,7 @@ export const Editor = memo(({ value, onChange, onCopied }: EditorProps) => {
 
   return (
     <div className="w-full h-full overflow-auto relative flex flex-col">
-      {value.trim() && (
+      {value.trim() && !hideCopy && (
         <button
           onClick={handleCopy}
           aria-label="Copy markdown"

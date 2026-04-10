@@ -13,7 +13,7 @@ export const MinimalView = memo(({ content, editing, onChange, onCopied }: Minim
   <div className="absolute inset-0 w-full bg-white dark:bg-dark-secondary overflow-y-auto px-4 sm:px-0 pt-14">
     {editing ? (
       <div className="w-full h-full">
-        <Editor value={content} onChange={onChange} onCopied={onCopied} />
+        <Editor value={content} onChange={onChange} onCopied={onCopied} hideCopy />
       </div>
     ) : (
       <div className="w-full max-w-[900px] mx-auto">

@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback, useMemo, useEffect } from 'react';
 import { useNotes } from './hooks/useNotes';
 import { useSplitPane } from './hooks/useSplitPane';
 import { useTocPane } from './hooks/useTocPane';
@@ -52,6 +52,11 @@ export const App = () => {
   useBodyScrollLock(menuOpen);
 
   const content = activeNote?.content ?? '';
+
+  useEffect(() => {
+    const firstLine = content.split('\n')[0]?.replace(/^[#\s]+/, '').trim();
+    document.title = firstLine ? `${firstLine} — InstantMD` : 'InstantMD';
+  }, [content]);
 
   const wordCount = useMemo(() => {
     const trimmed = content.trim();
